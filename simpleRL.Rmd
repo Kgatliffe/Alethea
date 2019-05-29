@@ -1,0 +1,94 @@
+```{r}
+#' Computes the reinforcement learning policy
+#'
+#' Computes reinforcement learning policy from a given state-action table Q.
+#' The policy is the decision-making function of the agent and defines the learning
+#' agent's behavior at a given time.
+#'
+#' @param x Variable which encodes the behavior of the agent. This can be
+#' either a \code{matrix}, \code{data.frame} or an \code{\link{rl}} object.
+#' @seealso \code{\link{ReinforcementLearning}}
+#' @return Returns the learned policy.
+#' @examples
+#' # Create exemplary state-action table (Q) with 2 actions and 3 states
+#' Q <- data.frame("up" = c(-1, 0, 1), "down" = c(-1, 1, 0))
+#'
+#' # Show best possible action in each state
+#' computePolicy(Q)
+#'
+#' @rdname computePolicy
+#' @export
+computePolicy <- function(x) {
+  UseMethod("computePolicy", x)
+}
+
+#' @export
+computePolicy.matrix <- function(x) {
+  policy <- colnames(x)[apply(x, 1, which.max)]
+  names(policy) <- rownames(x)
+  return(policy)
+}
+
+#' @export
+computePolicy.data.frame <- function(x) {
+  return(computePolicy(as.matrix(x)))
+}
+
+#' @export
+computePolicy.rl <- function(x) {
+  return(computePolicy(x$Q))
+}
+
+#' @export
+computePolicy.default <- function(x) {
+  stop("Argument invalid.")
+}
+
+#' Computes the reinforcement learning policy
+#'
+#' Deprecated. Please use [ReinforcementLearning::computePolicy()] instead.
+#'
+#' @param x Variable which encodes the behavior of the agent. This can be
+#' either a \code{matrix}, \code{data.frame} or an \code{\link{rl}} object.
+#' @seealso \code{\link{ReinforcementLearning}}
+#' @return Returns the learned policy.
+#' @rdname policy
+#' @export
+policy <- function(x) {
+  .Deprecated("computePolicy")
+  computePolicy(x)
+}
+
+```
+ 
+
+```{r}
+
+library(ReinforcementLearning)
+setwd("~/RLProject/Simple")
+simpledat <- read.csv("~/RLProject/Simple/simpledat2.csv")
+# Load dataset
+simpledat$State<-as.character(simpledat$State)
+simpledat$NextState<-as.character(simpledat$NextState)
+simpledat$Action<-as.character(simpledat$Action)
+# Define reinforcement learning parameters
+control <- list(alpha = 0.2, gamma = 0.4, epsilon = 0.1)
+
+# Perform reinforcement learning
+model1 <- ReinforcementLearning(simpledat, s = "State", a = "Action", r = 
+                                 "Reward", 
+                               s_new = "NextState", iter = 1, control = control)
+model2 <- ReinforcementLearning(simpledat, s = "State", a = "Action", r = 
+                                 "Reward", 
+                               s_new = "NextState", iter = 100, control = control)
+model3 <- ReinforcementLearning(simpledat, s = "State", a = "Action", r = 
+                                 "Reward", 
+                               s_new = "NextState", iter = 1, control = control, model=model2)
+# Print optimal policy
+policy1<-computePolicy(model1)
+View(policy1)
+policy2<-computePolicy(model2)
+View(policy2)
+policy3<-computePolicy(model3)
+View(policy3)
+```
