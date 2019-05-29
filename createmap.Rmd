@@ -5,7 +5,7 @@ output: html_notebook
 
 ```{r}
 library(stringi)
-simplepop <- read.csv("~/RLProject/Simple/simplepop.csv")
+simplepop <- read.csv("~/Alethea/simplepop.csv")
 id_num<-sample(100:140, 40, replace=F)
 for(i in 1: nrow(simplepop))
 {
@@ -51,26 +51,15 @@ statemap<-rbind(statemap,nextrow)
 ```
 
 ```{r}
-lefttime<-unlist(strsplit(as.character(statemap$NextState[1]),".", fixed = TRUE))
-newlefttime<-lefttime[7]
-
-statemap2<-data.frame("State"=paste0(statemap$NextState[1]), "Action"="Left", "Reward"=createmap$LeftReward[1], "NextState"=paste0(createmap$State[2],".",time-detain))
-nextrow<-data.frame("State"=paste0(createmap$State[1],".",time), "Action"="Right", "Reward"=createmap$RightReward[1], "NextState"=paste0(createmap$State[2],".",time-detain))
-statemap<-rbind(statemap,nextrow)
-nextrow<-data.frame("State"=paste0(createmap$State[1],".",time), "Action"="None", "Reward"=0, "NextState"=paste0(createmap$State[2],".",time-move))
-statemap<-rbind(statemap,nextrow)
-
-```
-
-```{r}
-for(i in 1:time)
+for(i in 2:6)
 {
-statedummy<-statemap$NextState[i]
+statedummy<-as.character(statemap$NextState[i])
+flag<-0
 
 for(j in 1:nrow(statemap))
 {
-flag<-0
-  if (statedummy==statemap$State[j])  {
+  if (statedummy==statemap$State[j])  
+    {
     flag<-1
     }
 }
@@ -79,14 +68,16 @@ if(flag==0)
 openstate<-unlist(stri_split_fixed(as.character(statedummy),".", fixed = TRUE, n=2))
 for (k in 1:nrow(createmap))
 {
-if (openstate[2]==createmap$State[k])
-{print(createmap$State[k]) }
+if (openstate[2]==as.character(createmap$State[k]))
+{
+timedet<-as.numeric(openstate[1])-detain
+timemove<-as.numeric(openstate[1])-move
+nextrow<-data.frame("State"=statedummy, "Action"="Left", "Reward"=createmap$LeftReward[k], "NextState"=paste0(timedet,".",createmap$State[k+1]))
+nextrow2<-data.frame("State"=statedummy, "Action"="Right", "Reward"=createmap$RightReward[k], "NextState"=paste0(timedet,".",createmap$State[k+1]))
+nextrow3<-data.frame("State"=statedummy, "Action"="None", "Reward"=0, "NextState"=paste0(timemove,".",createmap$State[k+1]))
+statemap<-rbind(statemap, nextrow, nextrow2, nextrow3)
 }
 } 
 }
+}
 ```
-
-statemapdummy<-data.frame("State"=statedummy, "Action"="Left", "Reward"=createmap$LeftReward[1], "NextState"=paste0(createmap$State[2],".",time-detain))
-nextrow<-data.frame("State"=paste0(createmap$State[1],".",time), "Action"="Right", "Reward"=createmap$RightReward[1], "NextState"=paste0(createmap$State[2],".",time-detain))
-statemap<-rbind(statemap,nextrow)
-nextrow<-data.frame("State"=paste0(createmap$State[1],".",time), "Action"="None", "Reward"=0, "NextState"=paste0(createmap$State[2],".",time-move))
