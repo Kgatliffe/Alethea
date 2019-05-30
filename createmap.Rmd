@@ -22,6 +22,7 @@ RightCode<-NA
 LeftReward<-NA
 RightReward<-NA
 State<-NA
+NextState<-NA
 for(i in 1: nrow(simplepop)/2)
 {
   id_num1<-id_num0[i]
@@ -33,30 +34,36 @@ for(i in 1: nrow(simplepop)/2)
   LeftReward[i]<-simplepop$Crim[id_num1]
   RightReward[i]<-simplepop$Crim[id_num2]
   State[i]<-paste0(LeftCode[i],'.',RightCode[i])
+  NextState[i-1]<-paste0(LeftCode[i],'.',RightCode[i])
+  NextState[i]<-"End"  
 }
-createmap<-data.frame(Left, Right,LeftCode, RightCode, LeftReward, RightReward, State)
+createmap<-data.frame(Left, Right,LeftCode, RightCode, LeftReward, RightReward, State, NextState)
 View(createmap)
 write.csv(createmap, file = "createmap.csv",row.names=FALSE)
 ```
 
 ```{r}
-time = 24
+time = 20
 detain = 3
 move = 1
-statemap<-data.frame("State"=paste0(time,".",createmap$State[1]), "Action"="Left", "Reward"=createmap$LeftReward[1], "NextState"=paste0(time-detain,".",createmap$State[2]))
-nextrow<-data.frame("State"=paste0(time,".",createmap$State[1]), "Action"="Right", "Reward"=createmap$RightReward[1], "NextState"=paste0(time-detain,".",createmap$State[2]))
+statemap<-data.frame("State"=paste0(time,".",createmap$State[1]), "Action"="Left", "Reward"=createmap$LeftReward[1], "NextState"=paste0(time-detain,".",createmap$NextState[1]))
+nextrow<-data.frame("State"=paste0(time,".",createmap$State[1]), "Action"="Right", "Reward"=createmap$RightReward[1], "NextState"=paste0(time-detain,".",createmap$NextState[1]))
 statemap<-rbind(statemap,nextrow)
-nextrow<-data.frame("State"=paste0(time,".",createmap$State[1]), "Action"="None", "Reward"=0, "NextState"=paste0(time-move,".",createmap$State[2]))
+nextrow<-data.frame("State"=paste0(time,".",createmap$NextState[1]), "Action"="None", "Reward"=0, "NextState"=paste0(time-move,".",createmap$NextState[1]))
 statemap<-rbind(statemap,nextrow)
 ```
 
 ```{r}
-for(i in 2:6)
+for(i in 2:150)
 {
   statedummy<-as.character(statemap$NextState[i])
-  print(statedummy)
-  flag<-0
-
+    flag<-0
+    if (is.na(statedummy))
+{}
+      else if (statedummy=="End")
+{}
+  else
+  {
   for(j in 1:nrow(statemap))
   {
     if (statedummy==statemap$State[j])  
@@ -73,12 +80,31 @@ for(i in 2:6)
       {
         timedet<-as.numeric(openstate[1])-detain
         timemove<-as.numeric(openstate[1])-move
-        nextrow<-data.frame("State"=statedummy, "Action"="Left", "Reward"=createmap$LeftReward[k], "NextState"=paste0(timedet,".",createmap$State[k+1]))
-        nextrow2<-data.frame("State"=statedummy, "Action"="Right", "Reward"=createmap$RightReward[k], "NextState"=paste0(timedet,".",createmap$State[k+1]))
+if(openstate[1]>=detain)
+{
+                nextrow<-data.frame("State"=statedummy, "Action"="Left", "Reward"=createmap$LeftReward[k], "NextState"=paste0(timedet,".",createmap$State[k+1]))
+        nextrow2<-data.frame("State"=statedummy, "Action"="Right", "Reward"=createmap$RightReward[k], 
+ "NextState"=paste0(timedet,".",createmap$State[k+1]))
+} 
+        else if(openstate[1]<detain)
+{
+                nextrow<-data.frame("State"=statedummy, "Action"="Left", "Reward"=createmap$LeftReward[k], "NextState"="End")
+        nextrow2<-data.frame("State"=statedummy, "Action"="Right", "Reward"=createmap$RightReward[k], 
+ "NextState"="End")
+} 
+        if(openstate[1]>=move)
+{
         nextrow3<-data.frame("State"=statedummy, "Action"="None", "Reward"=0, "NextState"=paste0(timemove,".",createmap$State[k+1]))
+        statemap<-rbind(statemap, nextrow, nextrow2, nextrow3)
+        }
+        else if (openstate[1]<move)
+{
+        nextrow3<-data.frame("State"=statedummy, "Action"="None", "Reward"=0, "NextState"="End")
         statemap<-rbind(statemap, nextrow, nextrow2, nextrow3)
       }
     } 
   }
+  }
+}
 }
 ```

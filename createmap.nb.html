@@ -1781,7 +1781,7 @@ for(i in 1: nrow(simplepop))
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaWRfbnVtMDwtc2FtcGxlKDE6NDAsIDQwLCByZXBsYWNlPUYpXG5MZWZ0PC1OQVxuUmlnaHQ8LU5BXG5MZWZ0Q29kZTwtTkFcblJpZ2h0Q29kZTwtTkFcbkxlZnRSZXdhcmQ8LU5BXG5SaWdodFJld2FyZDwtTkFcblN0YXRlPC1OQVxuZm9yKGkgaW4gMTogbnJvdyhzaW1wbGVwb3ApLzIpXG57XG5pZF9udW0xPC1pZF9udW0wW2ldXG5pZF9udW0yPC1pZF9udW0wW2krMjBdXG5MZWZ0W2ldPC1pZF9udW0xXG5SaWdodFtpXTwtaWRfbnVtMlxuTGVmdENvZGVbaV08LXNpbXBsZXBvcCRDb2RlW2lkX251bTFdXG5SaWdodENvZGVbaV08LXNpbXBsZXBvcCRDb2RlW2lkX251bTJdXG5MZWZ0UmV3YXJkW2ldPC1zaW1wbGVwb3AkQ3JpbVtpZF9udW0xXVxuUmlnaHRSZXdhcmRbaV08LXNpbXBsZXBvcCRDcmltW2lkX251bTJdXG5TdGF0ZVtpXTwtcGFzdGUwKExlZnRDb2RlW2ldLCcuJyxSaWdodENvZGVbaV0pXG59XG5jcmVhdGVtYXA8LWRhdGEuZnJhbWUoTGVmdCwgUmlnaHQsTGVmdENvZGUsIFJpZ2h0Q29kZSwgTGVmdFJld2FyZCwgUmlnaHRSZXdhcmQsIFN0YXRlKVxuVmlldyhjcmVhdGVtYXApXG4gd3JpdGUuY3N2KGNyZWF0ZW1hcCwgZmlsZSA9IFwiY3JlYXRlbWFwLmNzdlwiLHJvdy5uYW1lcz1GQUxTRSlcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaWRfbnVtMDwtc2FtcGxlKDE6NDAsIDQwLCByZXBsYWNlPUYpXG5MZWZ0PC1OQVxuUmlnaHQ8LU5BXG5MZWZ0Q29kZTwtTkFcblJpZ2h0Q29kZTwtTkFcbkxlZnRSZXdhcmQ8LU5BXG5SaWdodFJld2FyZDwtTkFcblN0YXRlPC1OQVxuTmV4dFN0YXRlPC1OQVxuZm9yKGkgaW4gMTogbnJvdyhzaW1wbGVwb3ApLzIpXG57XG4gIGlkX251bTE8LWlkX251bTBbaV1cbiAgaWRfbnVtMjwtaWRfbnVtMFtpKzIwXVxuICBMZWZ0W2ldPC1pZF9udW0xXG4gIFJpZ2h0W2ldPC1pZF9udW0yXG4gIExlZnRDb2RlW2ldPC1zaW1wbGVwb3AkQ29kZVtpZF9udW0xXVxuICBSaWdodENvZGVbaV08LXNpbXBsZXBvcCRDb2RlW2lkX251bTJdXG4gIExlZnRSZXdhcmRbaV08LXNpbXBsZXBvcCRDcmltW2lkX251bTFdXG4gIFJpZ2h0UmV3YXJkW2ldPC1zaW1wbGVwb3AkQ3JpbVtpZF9udW0yXVxuICBTdGF0ZVtpXTwtcGFzdGUwKExlZnRDb2RlW2ldLCcuJyxSaWdodENvZGVbaV0pXG4gIE5leHRTdGF0ZVtpLTFdPC1wYXN0ZTAoTGVmdENvZGVbaV0sJy4nLFJpZ2h0Q29kZVtpXSlcbiAgTmV4dFN0YXRlW2ldPC1cIkVuZFwiICBcbn1cbmNyZWF0ZW1hcDwtZGF0YS5mcmFtZShMZWZ0LCBSaWdodCxMZWZ0Q29kZSwgUmlnaHRDb2RlLCBMZWZ0UmV3YXJkLCBSaWdodFJld2FyZCwgU3RhdGUsIE5leHRTdGF0ZSlcblZpZXcoY3JlYXRlbWFwKVxud3JpdGUuY3N2KGNyZWF0ZW1hcCwgZmlsZSA9IFwiY3JlYXRlbWFwLmNzdlwiLHJvdy5uYW1lcz1GQUxTRSlcbmBgYCJ9 -->
 <pre class="r"><code>id_num0&lt;-sample(1:40, 40, replace=F)
 Left&lt;-NA
 Right&lt;-NA
@@ -1790,82 +1790,101 @@ RightCode&lt;-NA
 LeftReward&lt;-NA
 RightReward&lt;-NA
 State&lt;-NA
+NextState&lt;-NA
 for(i in 1: nrow(simplepop)/2)
 {
-id_num1&lt;-id_num0[i]
-id_num2&lt;-id_num0[i+20]
-Left[i]&lt;-id_num1
-Right[i]&lt;-id_num2
-LeftCode[i]&lt;-simplepop$Code[id_num1]
-RightCode[i]&lt;-simplepop$Code[id_num2]
-LeftReward[i]&lt;-simplepop$Crim[id_num1]
-RightReward[i]&lt;-simplepop$Crim[id_num2]
-State[i]&lt;-paste0(LeftCode[i],'.',RightCode[i])
+  id_num1&lt;-id_num0[i]
+  id_num2&lt;-id_num0[i+20]
+  Left[i]&lt;-id_num1
+  Right[i]&lt;-id_num2
+  LeftCode[i]&lt;-simplepop$Code[id_num1]
+  RightCode[i]&lt;-simplepop$Code[id_num2]
+  LeftReward[i]&lt;-simplepop$Crim[id_num1]
+  RightReward[i]&lt;-simplepop$Crim[id_num2]
+  State[i]&lt;-paste0(LeftCode[i],'.',RightCode[i])
+  NextState[i-1]&lt;-paste0(LeftCode[i],'.',RightCode[i])
+  NextState[i]&lt;-&quot;End&quot;  
 }
-createmap&lt;-data.frame(Left, Right,LeftCode, RightCode, LeftReward, RightReward, State)
+createmap&lt;-data.frame(Left, Right,LeftCode, RightCode, LeftReward, RightReward, State, NextState)
 View(createmap)
- write.csv(createmap, file = &quot;createmap.csv&quot;,row.names=FALSE)</code></pre>
+write.csv(createmap, file = &quot;createmap.csv&quot;,row.names=FALSE)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZSA9IDI0XG5kZXRhaW4gPSAzXG5tb3ZlID0gMVxuc3RhdGVtYXA8LWRhdGEuZnJhbWUoXCJTdGF0ZVwiPXBhc3RlMCh0aW1lLFwiLlwiLGNyZWF0ZW1hcCRTdGF0ZVsxXSksIFwiQWN0aW9uXCI9XCJMZWZ0XCIsIFwiUmV3YXJkXCI9Y3JlYXRlbWFwJExlZnRSZXdhcmRbMV0sIFwiTmV4dFN0YXRlXCI9cGFzdGUwKHRpbWUtZGV0YWluLFwiLlwiLGNyZWF0ZW1hcCRTdGF0ZVsyXSkpXG5uZXh0cm93PC1kYXRhLmZyYW1lKFwiU3RhdGVcIj1wYXN0ZTAodGltZSxcIi5cIixjcmVhdGVtYXAkU3RhdGVbMV0pLCBcIkFjdGlvblwiPVwiUmlnaHRcIiwgXCJSZXdhcmRcIj1jcmVhdGVtYXAkUmlnaHRSZXdhcmRbMV0sIFwiTmV4dFN0YXRlXCI9cGFzdGUwKHRpbWUtZGV0YWluLFwiLlwiLGNyZWF0ZW1hcCRTdGF0ZVsyXSkpXG5zdGF0ZW1hcDwtcmJpbmQoc3RhdGVtYXAsbmV4dHJvdylcbm5leHRyb3c8LWRhdGEuZnJhbWUoXCJTdGF0ZVwiPXBhc3RlMCh0aW1lLFwiLlwiLGNyZWF0ZW1hcCRTdGF0ZVsxXSksIFwiQWN0aW9uXCI9XCJOb25lXCIsIFwiUmV3YXJkXCI9MCwgXCJOZXh0U3RhdGVcIj1wYXN0ZTAodGltZS1tb3ZlLFwiLlwiLGNyZWF0ZW1hcCRTdGF0ZVsyXSkpXG5zdGF0ZW1hcDwtcmJpbmQoc3RhdGVtYXAsbmV4dHJvdylcbmBgYCJ9 -->
-<pre class="r"><code>time = 24
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZSA9IDIwXG5kZXRhaW4gPSAzXG5tb3ZlID0gMVxuc3RhdGVtYXA8LWRhdGEuZnJhbWUoXCJTdGF0ZVwiPXBhc3RlMCh0aW1lLFwiLlwiLGNyZWF0ZW1hcCRTdGF0ZVsxXSksIFwiQWN0aW9uXCI9XCJMZWZ0XCIsIFwiUmV3YXJkXCI9Y3JlYXRlbWFwJExlZnRSZXdhcmRbMV0sIFwiTmV4dFN0YXRlXCI9cGFzdGUwKHRpbWUtZGV0YWluLFwiLlwiLGNyZWF0ZW1hcCROZXh0U3RhdGVbMV0pKVxubmV4dHJvdzwtZGF0YS5mcmFtZShcIlN0YXRlXCI9cGFzdGUwKHRpbWUsXCIuXCIsY3JlYXRlbWFwJFN0YXRlWzFdKSwgXCJBY3Rpb25cIj1cIlJpZ2h0XCIsIFwiUmV3YXJkXCI9Y3JlYXRlbWFwJFJpZ2h0UmV3YXJkWzFdLCBcIk5leHRTdGF0ZVwiPXBhc3RlMCh0aW1lLWRldGFpbixcIi5cIixjcmVhdGVtYXAkTmV4dFN0YXRlWzFdKSlcbnN0YXRlbWFwPC1yYmluZChzdGF0ZW1hcCxuZXh0cm93KVxubmV4dHJvdzwtZGF0YS5mcmFtZShcIlN0YXRlXCI9cGFzdGUwKHRpbWUsXCIuXCIsY3JlYXRlbWFwJE5leHRTdGF0ZVsxXSksIFwiQWN0aW9uXCI9XCJOb25lXCIsIFwiUmV3YXJkXCI9MCwgXCJOZXh0U3RhdGVcIj1wYXN0ZTAodGltZS1tb3ZlLFwiLlwiLGNyZWF0ZW1hcCROZXh0U3RhdGVbMV0pKVxuc3RhdGVtYXA8LXJiaW5kKHN0YXRlbWFwLG5leHRyb3cpXG5gYGAifQ== -->
+<pre class="r"><code>time = 20
 detain = 3
 move = 1
-statemap&lt;-data.frame(&quot;State&quot;=paste0(time,&quot;.&quot;,createmap$State[1]), &quot;Action&quot;=&quot;Left&quot;, &quot;Reward&quot;=createmap$LeftReward[1], &quot;NextState&quot;=paste0(time-detain,&quot;.&quot;,createmap$State[2]))
-nextrow&lt;-data.frame(&quot;State&quot;=paste0(time,&quot;.&quot;,createmap$State[1]), &quot;Action&quot;=&quot;Right&quot;, &quot;Reward&quot;=createmap$RightReward[1], &quot;NextState&quot;=paste0(time-detain,&quot;.&quot;,createmap$State[2]))
+statemap&lt;-data.frame(&quot;State&quot;=paste0(time,&quot;.&quot;,createmap$State[1]), &quot;Action&quot;=&quot;Left&quot;, &quot;Reward&quot;=createmap$LeftReward[1], &quot;NextState&quot;=paste0(time-detain,&quot;.&quot;,createmap$NextState[1]))
+nextrow&lt;-data.frame(&quot;State&quot;=paste0(time,&quot;.&quot;,createmap$State[1]), &quot;Action&quot;=&quot;Right&quot;, &quot;Reward&quot;=createmap$RightReward[1], &quot;NextState&quot;=paste0(time-detain,&quot;.&quot;,createmap$NextState[1]))
 statemap&lt;-rbind(statemap,nextrow)
-nextrow&lt;-data.frame(&quot;State&quot;=paste0(time,&quot;.&quot;,createmap$State[1]), &quot;Action&quot;=&quot;None&quot;, &quot;Reward&quot;=0, &quot;NextState&quot;=paste0(time-move,&quot;.&quot;,createmap$State[2]))
+nextrow&lt;-data.frame(&quot;State&quot;=paste0(time,&quot;.&quot;,createmap$NextState[1]), &quot;Action&quot;=&quot;None&quot;, &quot;Reward&quot;=0, &quot;NextState&quot;=paste0(time-move,&quot;.&quot;,createmap$NextState[1]))
 statemap&lt;-rbind(statemap,nextrow)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZm9yKGkgaW4gMjo2KVxue1xuc3RhdGVkdW1teTwtYXMuY2hhcmFjdGVyKHN0YXRlbWFwJE5leHRTdGF0ZVtpXSlcbnByaW50KHN0YXRlZHVtbXkpXG5mbGFnPC0wXG5cbmZvcihqIGluIDE6bnJvdyhzdGF0ZW1hcCkpXG57XG4gIGlmIChzdGF0ZWR1bW15PT1zdGF0ZW1hcCRTdGF0ZVtqXSkgIFxuICAgIHtcbiAgICBmbGFnPC0xXG4gICAgfVxufVxuaWYoZmxhZz09MClcbntcbm9wZW5zdGF0ZTwtdW5saXN0KHN0cmlfc3BsaXRfZml4ZWQoYXMuY2hhcmFjdGVyKHN0YXRlZHVtbXkpLFwiLlwiLCBmaXhlZCA9IFRSVUUsIG49MikpXG5mb3IgKGsgaW4gMTpucm93KGNyZWF0ZW1hcCkpXG57XG5pZiAob3BlbnN0YXRlWzJdPT1hcy5jaGFyYWN0ZXIoY3JlYXRlbWFwJFN0YXRlW2tdKSlcbntcbnRpbWVkZXQ8LWFzLm51bWVyaWMob3BlbnN0YXRlWzFdKS1kZXRhaW5cbnRpbWVtb3ZlPC1hcy5udW1lcmljKG9wZW5zdGF0ZVsxXSktbW92ZVxubmV4dHJvdzwtZGF0YS5mcmFtZShcIlN0YXRlXCI9c3RhdGVkdW1teSwgXCJBY3Rpb25cIj1cIkxlZnRcIiwgXCJSZXdhcmRcIj1jcmVhdGVtYXAkTGVmdFJld2FyZFtrXSwgXCJOZXh0U3RhdGVcIj1wYXN0ZTAodGltZWRldCxcIi5cIixjcmVhdGVtYXAkU3RhdGVbaysxXSkpXG5uZXh0cm93MjwtZGF0YS5mcmFtZShcIlN0YXRlXCI9c3RhdGVkdW1teSwgXCJBY3Rpb25cIj1cIlJpZ2h0XCIsIFwiUmV3YXJkXCI9Y3JlYXRlbWFwJFJpZ2h0UmV3YXJkW2tdLCBcIk5leHRTdGF0ZVwiPXBhc3RlMCh0aW1lZGV0LFwiLlwiLGNyZWF0ZW1hcCRTdGF0ZVtrKzFdKSlcbm5leHRyb3czPC1kYXRhLmZyYW1lKFwiU3RhdGVcIj1zdGF0ZWR1bW15LCBcIkFjdGlvblwiPVwiTm9uZVwiLCBcIlJld2FyZFwiPTAsIFwiTmV4dFN0YXRlXCI9cGFzdGUwKHRpbWVtb3ZlLFwiLlwiLGNyZWF0ZW1hcCRTdGF0ZVtrKzFdKSlcbnN0YXRlbWFwPC1yYmluZChzdGF0ZW1hcCwgbmV4dHJvdywgbmV4dHJvdzIsIG5leHRyb3czKVxufVxufSBcbn1cbn1cbmBgYCJ9 -->
-<pre class="r"><code>for(i in 2:6)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZm9yKGkgaW4gMjoxNTApXG57XG4gIHN0YXRlZHVtbXk8LWFzLmNoYXJhY3RlcihzdGF0ZW1hcCROZXh0U3RhdGVbaV0pXG4gICAgZmxhZzwtMFxuICAgIGlmIChpcy5uYShzdGF0ZWR1bW15KSlcbnt9XG4gICAgICBlbHNlIGlmIChzdGF0ZWR1bW15PT1cIkVuZFwiKVxue31cbiAgZWxzZVxuICB7XG4gIGZvcihqIGluIDE6bnJvdyhzdGF0ZW1hcCkpXG4gIHtcbiAgICBpZiAoc3RhdGVkdW1teT09c3RhdGVtYXAkU3RhdGVbal0pICBcbiAgICB7XG4gICAgICBmbGFnPC0xXG4gICAgfVxuICB9XG4gIGlmKGZsYWc9PTApXG4gIHtcbiAgICBvcGVuc3RhdGU8LXVubGlzdChzdHJpX3NwbGl0X2ZpeGVkKGFzLmNoYXJhY3RlcihzdGF0ZWR1bW15KSxcIi5cIiwgZml4ZWQgPSBUUlVFLCBuPTIpKVxuICAgIGZvciAoayBpbiAxOm5yb3coY3JlYXRlbWFwKSlcbiAgICB7XG4gICAgICBpZiAob3BlbnN0YXRlWzJdPT1hcy5jaGFyYWN0ZXIoY3JlYXRlbWFwJFN0YXRlW2tdKSlcbiAgICAgIHtcbiAgICAgICAgdGltZWRldDwtYXMubnVtZXJpYyhvcGVuc3RhdGVbMV0pLWRldGFpblxuICAgICAgICB0aW1lbW92ZTwtYXMubnVtZXJpYyhvcGVuc3RhdGVbMV0pLW1vdmVcbmlmKG9wZW5zdGF0ZVsxXT49ZGV0YWluKVxue1xuICAgICAgICAgICAgICAgIG5leHRyb3c8LWRhdGEuZnJhbWUoXCJTdGF0ZVwiPXN0YXRlZHVtbXksIFwiQWN0aW9uXCI9XCJMZWZ0XCIsIFwiUmV3YXJkXCI9Y3JlYXRlbWFwJExlZnRSZXdhcmRba10sIFwiTmV4dFN0YXRlXCI9cGFzdGUwKHRpbWVkZXQsXCIuXCIsY3JlYXRlbWFwJFN0YXRlW2srMV0pKVxuICAgICAgICBuZXh0cm93MjwtZGF0YS5mcmFtZShcIlN0YXRlXCI9c3RhdGVkdW1teSwgXCJBY3Rpb25cIj1cIlJpZ2h0XCIsIFwiUmV3YXJkXCI9Y3JlYXRlbWFwJFJpZ2h0UmV3YXJkW2tdLCBcbiBcIk5leHRTdGF0ZVwiPXBhc3RlMCh0aW1lZGV0LFwiLlwiLGNyZWF0ZW1hcCRTdGF0ZVtrKzFdKSlcbn0gXG4gICAgICAgIGVsc2UgaWYob3BlbnN0YXRlWzFdPGRldGFpbilcbntcbiAgICAgICAgICAgICAgICBuZXh0cm93PC1kYXRhLmZyYW1lKFwiU3RhdGVcIj1zdGF0ZWR1bW15LCBcIkFjdGlvblwiPVwiTGVmdFwiLCBcIlJld2FyZFwiPWNyZWF0ZW1hcCRMZWZ0UmV3YXJkW2tdLCBcIk5leHRTdGF0ZVwiPVwiRW5kXCIpXG4gICAgICAgIG5leHRyb3cyPC1kYXRhLmZyYW1lKFwiU3RhdGVcIj1zdGF0ZWR1bW15LCBcIkFjdGlvblwiPVwiUmlnaHRcIiwgXCJSZXdhcmRcIj1jcmVhdGVtYXAkUmlnaHRSZXdhcmRba10sIFxuIFwiTmV4dFN0YXRlXCI9XCJFbmRcIilcbn0gXG4gICAgICAgIGlmKG9wZW5zdGF0ZVsxXT49bW92ZSlcbntcbiAgICAgICAgbmV4dHJvdzM8LWRhdGEuZnJhbWUoXCJTdGF0ZVwiPXN0YXRlZHVtbXksIFwiQWN0aW9uXCI9XCJOb25lXCIsIFwiUmV3YXJkXCI9MCwgXCJOZXh0U3RhdGVcIj1wYXN0ZTAodGltZW1vdmUsXCIuXCIsY3JlYXRlbWFwJFN0YXRlW2srMV0pKVxuICAgICAgICBzdGF0ZW1hcDwtcmJpbmQoc3RhdGVtYXAsIG5leHRyb3csIG5leHRyb3cyLCBuZXh0cm93MylcbiAgICAgICAgfVxuICAgICAgICBlbHNlIGlmIChvcGVuc3RhdGVbMV08bW92ZSlcbntcbiAgICAgICAgbmV4dHJvdzM8LWRhdGEuZnJhbWUoXCJTdGF0ZVwiPXN0YXRlZHVtbXksIFwiQWN0aW9uXCI9XCJOb25lXCIsIFwiUmV3YXJkXCI9MCwgXCJOZXh0U3RhdGVcIj1cIkVuZFwiKVxuICAgICAgICBzdGF0ZW1hcDwtcmJpbmQoc3RhdGVtYXAsIG5leHRyb3csIG5leHRyb3cyLCBuZXh0cm93MylcbiAgICAgIH1cbiAgICB9IFxuICB9XG4gIH1cbn1cbn1cbmBgYCJ9 -->
+<pre class="r"><code>for(i in 2:150)
 {
-statedummy&lt;-as.character(statemap$NextState[i])
-print(statedummy)
-flag&lt;-0
-
-for(j in 1:nrow(statemap))
-{
-  if (statedummy==statemap$State[j])  
+  statedummy&lt;-as.character(statemap$NextState[i])
+    flag&lt;-0
+    if (is.na(statedummy))
+{}
+      else if (statedummy==&quot;End&quot;)
+{}
+  else
+  {
+  for(j in 1:nrow(statemap))
+  {
+    if (statedummy==statemap$State[j])  
     {
-    flag&lt;-1
+      flag&lt;-1
     }
-}
-if(flag==0)
+  }
+  if(flag==0)
+  {
+    openstate&lt;-unlist(stri_split_fixed(as.character(statedummy),&quot;.&quot;, fixed = TRUE, n=2))
+    for (k in 1:nrow(createmap))
+    {
+      if (openstate[2]==as.character(createmap$State[k]))
+      {
+        timedet&lt;-as.numeric(openstate[1])-detain
+        timemove&lt;-as.numeric(openstate[1])-move
+if(openstate[1]&gt;=detain)
 {
-openstate&lt;-unlist(stri_split_fixed(as.character(statedummy),&quot;.&quot;, fixed = TRUE, n=2))
-for (k in 1:nrow(createmap))
-{
-if (openstate[2]==as.character(createmap$State[k]))
-{
-timedet&lt;-as.numeric(openstate[1])-detain
-timemove&lt;-as.numeric(openstate[1])-move
-nextrow&lt;-data.frame(&quot;State&quot;=statedummy, &quot;Action&quot;=&quot;Left&quot;, &quot;Reward&quot;=createmap$LeftReward[k], &quot;NextState&quot;=paste0(timedet,&quot;.&quot;,createmap$State[k+1]))
-nextrow2&lt;-data.frame(&quot;State&quot;=statedummy, &quot;Action&quot;=&quot;Right&quot;, &quot;Reward&quot;=createmap$RightReward[k], &quot;NextState&quot;=paste0(timedet,&quot;.&quot;,createmap$State[k+1]))
-nextrow3&lt;-data.frame(&quot;State&quot;=statedummy, &quot;Action&quot;=&quot;None&quot;, &quot;Reward&quot;=0, &quot;NextState&quot;=paste0(timemove,&quot;.&quot;,createmap$State[k+1]))
-statemap&lt;-rbind(statemap, nextrow, nextrow2, nextrow3)
-}
+                nextrow&lt;-data.frame(&quot;State&quot;=statedummy, &quot;Action&quot;=&quot;Left&quot;, &quot;Reward&quot;=createmap$LeftReward[k], &quot;NextState&quot;=paste0(timedet,&quot;.&quot;,createmap$State[k+1]))
+        nextrow2&lt;-data.frame(&quot;State&quot;=statedummy, &quot;Action&quot;=&quot;Right&quot;, &quot;Reward&quot;=createmap$RightReward[k], 
+ &quot;NextState&quot;=paste0(timedet,&quot;.&quot;,createmap$State[k+1]))
 } 
+        else if(openstate[1]&lt;detain)
+{
+                nextrow&lt;-data.frame(&quot;State&quot;=statedummy, &quot;Action&quot;=&quot;Left&quot;, &quot;Reward&quot;=createmap$LeftReward[k], &quot;NextState&quot;=&quot;End&quot;)
+        nextrow2&lt;-data.frame(&quot;State&quot;=statedummy, &quot;Action&quot;=&quot;Right&quot;, &quot;Reward&quot;=createmap$RightReward[k], 
+ &quot;NextState&quot;=&quot;End&quot;)
+} 
+        if(openstate[1]&gt;=move)
+{
+        nextrow3&lt;-data.frame(&quot;State&quot;=statedummy, &quot;Action&quot;=&quot;None&quot;, &quot;Reward&quot;=0, &quot;NextState&quot;=paste0(timemove,&quot;.&quot;,createmap$State[k+1]))
+        statemap&lt;-rbind(statemap, nextrow, nextrow2, nextrow3)
+        }
+        else if (openstate[1]&lt;move)
+{
+        nextrow3&lt;-data.frame(&quot;State&quot;=statedummy, &quot;Action&quot;=&quot;None&quot;, &quot;Reward&quot;=0, &quot;NextState&quot;=&quot;End&quot;)
+        statemap&lt;-rbind(statemap, nextrow, nextrow2, nextrow3)
+      }
+    } 
+  }
+  }
 }
 }</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiMjEuMTI2LjEuMC4xMjQuMS44XCJcblsxXSBcIjIzLjEyNi4xLjAuMTI0LjEuOFwiXG5bMV0gXCIxOC4xMzAuMS4zLjEyOC4xLjFcIlxuWzFdIFwiMTguMTMwLjEuMy4xMjguMS4xXCJcblsxXSBcIjIwLjEzMC4xLjMuMTI4LjEuMVwiXG4ifQ== -->
-<pre><code>[1] &quot;21.126.1.0.124.1.8&quot;
-[1] &quot;23.126.1.0.124.1.8&quot;
-[1] &quot;18.130.1.3.128.1.1&quot;
-[1] &quot;18.130.1.3.128.1.1&quot;
-[1] &quot;20.130.1.3.128.1.1&quot;</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkoc3RyaW5naSkKc2ltcGxlcG9wIDwtIHJlYWQuY3N2KCJ+L0FsZXRoZWEvc2ltcGxlcG9wLmNzdiIpCmlkX251bTwtc2FtcGxlKDEwMDoxNDAsIDQwLCByZXBsYWNlPUYpCmZvcihpIGluIDE6IG5yb3coc2ltcGxlcG9wKSkKewogIHNpbXBsZXBvcCRJRFtpXTwtaWRfbnVtW2ldCiAgc2ltcGxlcG9wJENvZGVbaV08LXBhc3RlMChzaW1wbGVwb3AkSURbaV0sJy4nLHNpbXBsZXBvcCRUeXBlW2ldLCcuJyxzaW1wbGVwb3AkU3VzcFtpXSkKfQpgYGAKYGBge3J9CmlkX251bTA8LXNhbXBsZSgxOjQwLCA0MCwgcmVwbGFjZT1GKQpMZWZ0PC1OQQpSaWdodDwtTkEKTGVmdENvZGU8LU5BClJpZ2h0Q29kZTwtTkEKTGVmdFJld2FyZDwtTkEKUmlnaHRSZXdhcmQ8LU5BClN0YXRlPC1OQQpmb3IoaSBpbiAxOiBucm93KHNpbXBsZXBvcCkvMikKewogIGlkX251bTE8LWlkX251bTBbaV0KICBpZF9udW0yPC1pZF9udW0wW2krMjBdCiAgTGVmdFtpXTwtaWRfbnVtMQogIFJpZ2h0W2ldPC1pZF9udW0yCiAgTGVmdENvZGVbaV08LXNpbXBsZXBvcCRDb2RlW2lkX251bTFdCiAgUmlnaHRDb2RlW2ldPC1zaW1wbGVwb3AkQ29kZVtpZF9udW0yXQogIExlZnRSZXdhcmRbaV08LXNpbXBsZXBvcCRDcmltW2lkX251bTFdCiAgUmlnaHRSZXdhcmRbaV08LXNpbXBsZXBvcCRDcmltW2lkX251bTJdCiAgU3RhdGVbaV08LXBhc3RlMChMZWZ0Q29kZVtpXSwnLicsUmlnaHRDb2RlW2ldKQp9CmNyZWF0ZW1hcDwtZGF0YS5mcmFtZShMZWZ0LCBSaWdodCxMZWZ0Q29kZSwgUmlnaHRDb2RlLCBMZWZ0UmV3YXJkLCBSaWdodFJld2FyZCwgU3RhdGUpClZpZXcoY3JlYXRlbWFwKQp3cml0ZS5jc3YoY3JlYXRlbWFwLCBmaWxlID0gImNyZWF0ZW1hcC5jc3YiLHJvdy5uYW1lcz1GQUxTRSkKYGBgCgpgYGB7cn0KdGltZSA9IDI0CmRldGFpbiA9IDMKbW92ZSA9IDEKc3RhdGVtYXA8LWRhdGEuZnJhbWUoIlN0YXRlIj1wYXN0ZTAodGltZSwiLiIsY3JlYXRlbWFwJFN0YXRlWzFdKSwgIkFjdGlvbiI9IkxlZnQiLCAiUmV3YXJkIj1jcmVhdGVtYXAkTGVmdFJld2FyZFsxXSwgIk5leHRTdGF0ZSI9cGFzdGUwKHRpbWUtZGV0YWluLCIuIixjcmVhdGVtYXAkU3RhdGVbMl0pKQpuZXh0cm93PC1kYXRhLmZyYW1lKCJTdGF0ZSI9cGFzdGUwKHRpbWUsIi4iLGNyZWF0ZW1hcCRTdGF0ZVsxXSksICJBY3Rpb24iPSJSaWdodCIsICJSZXdhcmQiPWNyZWF0ZW1hcCRSaWdodFJld2FyZFsxXSwgIk5leHRTdGF0ZSI9cGFzdGUwKHRpbWUtZGV0YWluLCIuIixjcmVhdGVtYXAkU3RhdGVbMl0pKQpzdGF0ZW1hcDwtcmJpbmQoc3RhdGVtYXAsbmV4dHJvdykKbmV4dHJvdzwtZGF0YS5mcmFtZSgiU3RhdGUiPXBhc3RlMCh0aW1lLCIuIixjcmVhdGVtYXAkU3RhdGVbMV0pLCAiQWN0aW9uIj0iTm9uZSIsICJSZXdhcmQiPTAsICJOZXh0U3RhdGUiPXBhc3RlMCh0aW1lLW1vdmUsIi4iLGNyZWF0ZW1hcCRTdGF0ZVsyXSkpCnN0YXRlbWFwPC1yYmluZChzdGF0ZW1hcCxuZXh0cm93KQpgYGAKCmBgYHtyfQpmb3IoaSBpbiAyOjYpCnsKICBzdGF0ZWR1bW15PC1hcy5jaGFyYWN0ZXIoc3RhdGVtYXAkTmV4dFN0YXRlW2ldKQogIHByaW50KHN0YXRlZHVtbXkpCiAgZmxhZzwtMAoKICBmb3IoaiBpbiAxOm5yb3coc3RhdGVtYXApKQogIHsKICAgIGlmIChzdGF0ZWR1bW15PT1zdGF0ZW1hcCRTdGF0ZVtqXSkgIAogICAgewogICAgICBmbGFnPC0xCiAgICB9CiAgfQogIGlmKGZsYWc9PTApCiAgewogICAgb3BlbnN0YXRlPC11bmxpc3Qoc3RyaV9zcGxpdF9maXhlZChhcy5jaGFyYWN0ZXIoc3RhdGVkdW1teSksIi4iLCBmaXhlZCA9IFRSVUUsIG49MikpCiAgICBmb3IgKGsgaW4gMTpucm93KGNyZWF0ZW1hcCkpCiAgICB7CiAgICAgIGlmIChvcGVuc3RhdGVbMl09PWFzLmNoYXJhY3RlcihjcmVhdGVtYXAkU3RhdGVba10pKQogICAgICB7CiAgICAgICAgdGltZWRldDwtYXMubnVtZXJpYyhvcGVuc3RhdGVbMV0pLWRldGFpbgogICAgICAgIHRpbWVtb3ZlPC1hcy5udW1lcmljKG9wZW5zdGF0ZVsxXSktbW92ZQogICAgICAgIG5leHRyb3c8LWRhdGEuZnJhbWUoIlN0YXRlIj1zdGF0ZWR1bW15LCAiQWN0aW9uIj0iTGVmdCIsICJSZXdhcmQiPWNyZWF0ZW1hcCRMZWZ0UmV3YXJkW2tdLCAiTmV4dFN0YXRlIj1wYXN0ZTAodGltZWRldCwiLiIsY3JlYXRlbWFwJFN0YXRlW2srMV0pKQogICAgICAgIG5leHRyb3cyPC1kYXRhLmZyYW1lKCJTdGF0ZSI9c3RhdGVkdW1teSwgIkFjdGlvbiI9IlJpZ2h0IiwgIlJld2FyZCI9Y3JlYXRlbWFwJFJpZ2h0UmV3YXJkW2tdLCAiTmV4dFN0YXRlIj1wYXN0ZTAodGltZWRldCwiLiIsY3JlYXRlbWFwJFN0YXRlW2srMV0pKQogICAgICAgIG5leHRyb3czPC1kYXRhLmZyYW1lKCJTdGF0ZSI9c3RhdGVkdW1teSwgIkFjdGlvbiI9Ik5vbmUiLCAiUmV3YXJkIj0wLCAiTmV4dFN0YXRlIj1wYXN0ZTAodGltZW1vdmUsIi4iLGNyZWF0ZW1hcCRTdGF0ZVtrKzFdKSkKICAgICAgICBzdGF0ZW1hcDwtcmJpbmQoc3RhdGVtYXAsIG5leHRyb3csIG5leHRyb3cyLCBuZXh0cm93MykKICAgICAgfQogICAgfSAKICB9Cn0KYGBgCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkoc3RyaW5naSkKc2ltcGxlcG9wIDwtIHJlYWQuY3N2KCJ+L0FsZXRoZWEvc2ltcGxlcG9wLmNzdiIpCmlkX251bTwtc2FtcGxlKDEwMDoxNDAsIDQwLCByZXBsYWNlPUYpCmZvcihpIGluIDE6IG5yb3coc2ltcGxlcG9wKSkKewogIHNpbXBsZXBvcCRJRFtpXTwtaWRfbnVtW2ldCiAgc2ltcGxlcG9wJENvZGVbaV08LXBhc3RlMChzaW1wbGVwb3AkSURbaV0sJy4nLHNpbXBsZXBvcCRUeXBlW2ldLCcuJyxzaW1wbGVwb3AkU3VzcFtpXSkKfQpgYGAKYGBge3J9CmlkX251bTA8LXNhbXBsZSgxOjQwLCA0MCwgcmVwbGFjZT1GKQpMZWZ0PC1OQQpSaWdodDwtTkEKTGVmdENvZGU8LU5BClJpZ2h0Q29kZTwtTkEKTGVmdFJld2FyZDwtTkEKUmlnaHRSZXdhcmQ8LU5BClN0YXRlPC1OQQpOZXh0U3RhdGU8LU5BCmZvcihpIGluIDE6IG5yb3coc2ltcGxlcG9wKS8yKQp7CiAgaWRfbnVtMTwtaWRfbnVtMFtpXQogIGlkX251bTI8LWlkX251bTBbaSsyMF0KICBMZWZ0W2ldPC1pZF9udW0xCiAgUmlnaHRbaV08LWlkX251bTIKICBMZWZ0Q29kZVtpXTwtc2ltcGxlcG9wJENvZGVbaWRfbnVtMV0KICBSaWdodENvZGVbaV08LXNpbXBsZXBvcCRDb2RlW2lkX251bTJdCiAgTGVmdFJld2FyZFtpXTwtc2ltcGxlcG9wJENyaW1baWRfbnVtMV0KICBSaWdodFJld2FyZFtpXTwtc2ltcGxlcG9wJENyaW1baWRfbnVtMl0KICBTdGF0ZVtpXTwtcGFzdGUwKExlZnRDb2RlW2ldLCcuJyxSaWdodENvZGVbaV0pCiAgTmV4dFN0YXRlW2ktMV08LXBhc3RlMChMZWZ0Q29kZVtpXSwnLicsUmlnaHRDb2RlW2ldKQogIE5leHRTdGF0ZVtpXTwtIkVuZCIgIAp9CmNyZWF0ZW1hcDwtZGF0YS5mcmFtZShMZWZ0LCBSaWdodCxMZWZ0Q29kZSwgUmlnaHRDb2RlLCBMZWZ0UmV3YXJkLCBSaWdodFJld2FyZCwgU3RhdGUsIE5leHRTdGF0ZSkKVmlldyhjcmVhdGVtYXApCndyaXRlLmNzdihjcmVhdGVtYXAsIGZpbGUgPSAiY3JlYXRlbWFwLmNzdiIscm93Lm5hbWVzPUZBTFNFKQpgYGAKCmBgYHtyfQp0aW1lID0gMjAKZGV0YWluID0gMwptb3ZlID0gMQpzdGF0ZW1hcDwtZGF0YS5mcmFtZSgiU3RhdGUiPXBhc3RlMCh0aW1lLCIuIixjcmVhdGVtYXAkU3RhdGVbMV0pLCAiQWN0aW9uIj0iTGVmdCIsICJSZXdhcmQiPWNyZWF0ZW1hcCRMZWZ0UmV3YXJkWzFdLCAiTmV4dFN0YXRlIj1wYXN0ZTAodGltZS1kZXRhaW4sIi4iLGNyZWF0ZW1hcCROZXh0U3RhdGVbMV0pKQpuZXh0cm93PC1kYXRhLmZyYW1lKCJTdGF0ZSI9cGFzdGUwKHRpbWUsIi4iLGNyZWF0ZW1hcCRTdGF0ZVsxXSksICJBY3Rpb24iPSJSaWdodCIsICJSZXdhcmQiPWNyZWF0ZW1hcCRSaWdodFJld2FyZFsxXSwgIk5leHRTdGF0ZSI9cGFzdGUwKHRpbWUtZGV0YWluLCIuIixjcmVhdGVtYXAkTmV4dFN0YXRlWzFdKSkKc3RhdGVtYXA8LXJiaW5kKHN0YXRlbWFwLG5leHRyb3cpCm5leHRyb3c8LWRhdGEuZnJhbWUoIlN0YXRlIj1wYXN0ZTAodGltZSwiLiIsY3JlYXRlbWFwJE5leHRTdGF0ZVsxXSksICJBY3Rpb24iPSJOb25lIiwgIlJld2FyZCI9MCwgIk5leHRTdGF0ZSI9cGFzdGUwKHRpbWUtbW92ZSwiLiIsY3JlYXRlbWFwJE5leHRTdGF0ZVsxXSkpCnN0YXRlbWFwPC1yYmluZChzdGF0ZW1hcCxuZXh0cm93KQpgYGAKCmBgYHtyfQpmb3IoaSBpbiAyOjE1MCkKewogIHN0YXRlZHVtbXk8LWFzLmNoYXJhY3RlcihzdGF0ZW1hcCROZXh0U3RhdGVbaV0pCiAgICBmbGFnPC0wCiAgICBpZiAoaXMubmEoc3RhdGVkdW1teSkpCnt9CiAgICAgIGVsc2UgaWYgKHN0YXRlZHVtbXk9PSJFbmQiKQp7fQogIGVsc2UKICB7CiAgZm9yKGogaW4gMTpucm93KHN0YXRlbWFwKSkKICB7CiAgICBpZiAoc3RhdGVkdW1teT09c3RhdGVtYXAkU3RhdGVbal0pICAKICAgIHsKICAgICAgZmxhZzwtMQogICAgfQogIH0KICBpZihmbGFnPT0wKQogIHsKICAgIG9wZW5zdGF0ZTwtdW5saXN0KHN0cmlfc3BsaXRfZml4ZWQoYXMuY2hhcmFjdGVyKHN0YXRlZHVtbXkpLCIuIiwgZml4ZWQgPSBUUlVFLCBuPTIpKQogICAgZm9yIChrIGluIDE6bnJvdyhjcmVhdGVtYXApKQogICAgewogICAgICBpZiAob3BlbnN0YXRlWzJdPT1hcy5jaGFyYWN0ZXIoY3JlYXRlbWFwJFN0YXRlW2tdKSkKICAgICAgewogICAgICAgIHRpbWVkZXQ8LWFzLm51bWVyaWMob3BlbnN0YXRlWzFdKS1kZXRhaW4KICAgICAgICB0aW1lbW92ZTwtYXMubnVtZXJpYyhvcGVuc3RhdGVbMV0pLW1vdmUKaWYob3BlbnN0YXRlWzFdPj1kZXRhaW4pCnsKICAgICAgICAgICAgICAgIG5leHRyb3c8LWRhdGEuZnJhbWUoIlN0YXRlIj1zdGF0ZWR1bW15LCAiQWN0aW9uIj0iTGVmdCIsICJSZXdhcmQiPWNyZWF0ZW1hcCRMZWZ0UmV3YXJkW2tdLCAiTmV4dFN0YXRlIj1wYXN0ZTAodGltZWRldCwiLiIsY3JlYXRlbWFwJFN0YXRlW2srMV0pKQogICAgICAgIG5leHRyb3cyPC1kYXRhLmZyYW1lKCJTdGF0ZSI9c3RhdGVkdW1teSwgIkFjdGlvbiI9IlJpZ2h0IiwgIlJld2FyZCI9Y3JlYXRlbWFwJFJpZ2h0UmV3YXJkW2tdLCAKICJOZXh0U3RhdGUiPXBhc3RlMCh0aW1lZGV0LCIuIixjcmVhdGVtYXAkU3RhdGVbaysxXSkpCn0gCiAgICAgICAgZWxzZSBpZihvcGVuc3RhdGVbMV08ZGV0YWluKQp7CiAgICAgICAgICAgICAgICBuZXh0cm93PC1kYXRhLmZyYW1lKCJTdGF0ZSI9c3RhdGVkdW1teSwgIkFjdGlvbiI9IkxlZnQiLCAiUmV3YXJkIj1jcmVhdGVtYXAkTGVmdFJld2FyZFtrXSwgIk5leHRTdGF0ZSI9IkVuZCIpCiAgICAgICAgbmV4dHJvdzI8LWRhdGEuZnJhbWUoIlN0YXRlIj1zdGF0ZWR1bW15LCAiQWN0aW9uIj0iUmlnaHQiLCAiUmV3YXJkIj1jcmVhdGVtYXAkUmlnaHRSZXdhcmRba10sIAogIk5leHRTdGF0ZSI9IkVuZCIpCn0gCiAgICAgICAgaWYob3BlbnN0YXRlWzFdPj1tb3ZlKQp7CiAgICAgICAgbmV4dHJvdzM8LWRhdGEuZnJhbWUoIlN0YXRlIj1zdGF0ZWR1bW15LCAiQWN0aW9uIj0iTm9uZSIsICJSZXdhcmQiPTAsICJOZXh0U3RhdGUiPXBhc3RlMCh0aW1lbW92ZSwiLiIsY3JlYXRlbWFwJFN0YXRlW2srMV0pKQogICAgICAgIHN0YXRlbWFwPC1yYmluZChzdGF0ZW1hcCwgbmV4dHJvdywgbmV4dHJvdzIsIG5leHRyb3czKQogICAgICAgIH0KICAgICAgICBlbHNlIGlmIChvcGVuc3RhdGVbMV08bW92ZSkKewogICAgICAgIG5leHRyb3czPC1kYXRhLmZyYW1lKCJTdGF0ZSI9c3RhdGVkdW1teSwgIkFjdGlvbiI9Ik5vbmUiLCAiUmV3YXJkIj0wLCAiTmV4dFN0YXRlIj0iRW5kIikKICAgICAgICBzdGF0ZW1hcDwtcmJpbmQoc3RhdGVtYXAsIG5leHRyb3csIG5leHRyb3cyLCBuZXh0cm93MykKICAgICAgfQogICAgfSAKICB9CiAgfQp9Cn0KYGBgCg==</div>
 
 
 
