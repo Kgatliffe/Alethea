@@ -60,13 +60,24 @@ policy <- function(x) {
 }
 
 ```
+
+```{r}
+print.rl <- function(x, ...) {
+  cat("State-Action function Q\n")
+  print(x$Q)
+  cat("\nPolicy\n")
+  print(x$Policy)
+  cat("\nReward (last iteration)\n")
+  print(x$Reward)
+}
+```
  
 
 ```{r}
 
 library(ReinforcementLearning)
-setwd("~/RLProject/Simple")
-#simpledat <- read.csv("~/RLProject/Simple/simpledat2.csv")
+setwd("~/Alethea")
+simpledat <- read.csv("~/Alethea/statemap.csv")
 # Load dataset
 simpledat$State<-as.character(simpledat$State)
 simpledat$NextState<-as.character(simpledat$NextState)
@@ -80,7 +91,7 @@ model1 <- ReinforcementLearning(simpledat, s = "State", a = "Action", r =
                                s_new = "NextState", iter = 1, control = control)
 model2 <- ReinforcementLearning(simpledat, s = "State", a = "Action", r = 
                                  "Reward", 
-                               s_new = "NextState", iter = 100, control = control)
+                               s_new = "NextState", iter = 1000, control = control)
 model3 <- ReinforcementLearning(simpledat, s = "State", a = "Action", r = 
                                  "Reward", 
                                s_new = "NextState", iter = 1, control = control, model=model2)
@@ -91,4 +102,8 @@ policy2<-computePolicy(model2)
 View(policy2)
 policy3<-computePolicy(model3)
 View(policy3)
+write.csv(policy1, file = "policy1.2.csv",row.names=TRUE)
+write.csv(policy2, file = "policy2.2.csv",row.names=TRUE)
+write.csv(policy3, file = "policy3.2.csv",row.names=TRUE)
+print.rl(model3)
 ```
