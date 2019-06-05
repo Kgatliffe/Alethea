@@ -109,6 +109,8 @@ LeftCode<-NA
 RightCode<-NA
 LeftReward<-NA
 RightReward<-NA
+LeftCrim<-NA
+RightCrim<-NA
 LeftGroup<-NA
 RightGroup<-NA
 LeftSusp<-NA
@@ -129,11 +131,13 @@ for(i in 1: 20)
   RightGroup[i]<-population$Type[id_num2]
   LeftSusp[i]<-population$Susp[id_num1]
   RightSusp[i]<-population$Susp[id_num2]
+  LeftCrim[i]<-population$Crim[id_num1]
+  RightCrim[i]<-population$Crim[id_num2]
   State[i]<-paste0(LeftCode[i],'.',RightCode[i])
   NextState[i-1]<-paste0(LeftCode[i],'.',RightCode[i])
   NextState[i]<-"End"  
 }
-createRLsample<-data.frame(Left,LeftGroup, LeftSusp, LeftCode, LeftReward, Right, RightGroup, RightSusp, RightCode, RightReward, State, NextState)
+createRLsample<-data.frame(Left,LeftGroup, LeftSusp, LeftCrim, LeftReward, LeftCode, Right, RightGroup, RightSusp, RightCrim, RightReward, RightCode, State, NextState)
 return(createRLsample)
 }
 ```
@@ -144,10 +148,22 @@ time = parameters$daylength
 detain = parameters$detaintime
 move = parameters$traveltime
 
-statemap<-data.frame("State"=paste0(time,".",createsample$State[1]), "Action"="Left", "Reward"=createsample$LeftReward[1], "NextState"=paste0(time-detain,".",createsample$NextState[1]))
-nextrow<-data.frame("State"=paste0(time,".",createsample$State[1]), "Action"="Right", "Reward"=createsample$RightReward[1], "NextState"=paste0(time-detain,".",createsample$NextState[1]))
+statemap<-data.frame("State"=paste0(time,".",createsample$State[1]), 
+                     "Action"="Left", 
+                     "Reward"=createsample$LeftReward[1], 
+                     "NextState"=paste0(time-detain,".",createsample$NextState[1]),
+                      "Crim"=createsample$LeftCrim[1])
+nextrow<-data.frame("State"=paste0(time,".",createsample$State[1]), 
+                    "Action"="Right", 
+                    "Reward"=createsample$RightReward[1], 
+                    "NextState"=paste0(time-detain,".",createsample$NextState[1]),
+                    "Crim"=createsample$RightCrim[1])
 statemap<-rbind(statemap,nextrow)
-nextrow<-data.frame("State"=paste0(time,".",createsample$State[1]), "Action"="None", "Reward"=0, "NextState"=paste0(time-move,".",createsample$NextState[1]))
+nextrow<-data.frame("State"=paste0(time,".",createsample$State[1]), 
+                    "Action"="None", 
+                    "Reward"=0, 
+                    "NextState"=paste0(time-move,".",createsample$NextState[1]),
+                    "Crim"=0)
 statemap<-rbind(statemap,nextrow)
 
 for(i in 2:1000)
@@ -178,24 +194,46 @@ for(i in 2:1000)
         timemove<-as.numeric(openstate[1])-move
 if(as.numeric(openstate[1])>=detain)
 {
-                nextrow<-data.frame("State"=statedummy, "Action"="Left", "Reward"=createsample$LeftReward[k], "NextState"=paste0(timedet,".",createsample$State[k+1]))
-        nextrow2<-data.frame("State"=statedummy, "Action"="Right", "Reward"=createsample$RightReward[k], 
- "NextState"=paste0(timedet,".",createsample$State[k+1]))
+                nextrow<-data.frame("State"=statedummy, 
+                                    "Action"="Left", 
+                                    "Reward"=createsample$LeftReward[k], 
+                                "NextState"=paste0(timedet,".",createsample$State[k+1]),
+                                "Crim"=createsample$LeftCrim[k])
+        nextrow2<-data.frame("State"=statedummy, 
+                             "Action"="Right", 
+                             "Reward"=createsample$RightReward[k], 
+                              "NextState"=paste0(timedet,".",createsample$State[k+1]),
+                                "Crim"=createsample$RightCrim[k])
 } 
         else if(as.numeric(openstate[1])<detain)
 {
-                nextrow<-data.frame("State"=statedummy, "Action"="Left", "Reward"=createsample$LeftReward[k], "NextState"="End")
-        nextrow2<-data.frame("State"=statedummy, "Action"="Right", "Reward"=createsample$RightReward[k], 
- "NextState"="End")
+                nextrow<-data.frame("State"=statedummy, 
+                                    "Action"="Left", 
+                                    "Reward"=createsample$LeftReward[k], 
+                                    "NextState"="End",
+                                "Crim"=createsample$LeftCrim[k])
+        nextrow2<-data.frame("State"=statedummy, 
+                             "Action"="Right", 
+                             "Reward"=createsample$RightReward[k], 
+                             "NextState"="End",
+                                "Crim"=createsample$RightCrim[k])
 } 
         if(as.numeric(openstate[1])>=move)
 {
-        nextrow3<-data.frame("State"=statedummy, "Action"="None", "Reward"=0, "NextState"=paste0(timemove,".",createsample$State[k+1]))
+        nextrow3<-data.frame("State"=statedummy, 
+                             "Action"="None", 
+                             "Reward"=0, 
+                             "NextState"=paste0(timemove,".",createsample$State[k+1]),
+                                "Crim"=0)
         statemap<-rbind(statemap, nextrow, nextrow2, nextrow3)
         }
         else if (as.numeric(openstate[1])<move)
 {
-        nextrow3<-data.frame("State"=statedummy, "Action"="None", "Reward"=0, "NextState"="End")
+        nextrow3<-data.frame("State"=statedummy, 
+                             "Action"="None", 
+                             "Reward"=0, 
+                             "NextState"="End",
+                                "Crim"=0)
         statemap<-rbind(statemap, nextrow, nextrow2, nextrow3)
       }
     } 
