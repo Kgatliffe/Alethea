@@ -1,0 +1,91 @@
+#---
+#project: "Aletheia2019"
+#title: InitializePopulation.Rmd
+#output: html_notebook
+#location: ~/Documents/Research/Aletheia2019
+
+#university: University of Colorado at Denver
+#class: MATH 6388
+#professor: Audrey Hendricks
+
+#author: Kathleen Gatliffe
+#date: 25 January 15
+#---
+
+# This file creates the population data file for the Aletheia2019 project.
+
+```{r}
+#setwd("/Users/gatliffe/Documents/Research/Aletheia2019")
+library(binaryLogic)
+library(stats)
+library(dplyr)
+library(hash)
+library(ggplot2)
+library(ReinforcementLearning)
+library(testthat)
+library(wesanderson)
+```
+
+# Load function file, parameters, color palettes.
+
+```{r}
+#source("AllKFunctions.R")
+source("Parameters.R")
+#source("AllKPalettes.R")
+```
+
+# Load parameters.
+
+```{r}
+Parameters<-LoadParameters()
+```
+
+# This is the population seeding routine.
+
+```{r}
+
+set.seed=(Parameters$seed)
+
+Population = data.frame(matrix(vector(), 0, 11, dimnames=list(c(), c("ID", "Type","Target", "Random", "Indirect","ClueNoInfo", "ClueType", "ClueIndirect", "TimesOnMap","IgnoreHistory", "DetainHistory" ))),stringsAsFactors=F)
+Person = data.frame(matrix(vector(), 1, 11, dimnames=list(c(), c("ID", "Type","Target", "Random", "Indirect","ClueNoInfo", "ClueType", "ClueIndirect","TimesOnMap","IgnoreHistory", "DetainHistory"))),stringsAsFactors=F)
+for (i in 1:Parameters$pop)
+{
+Person$ID <-sprintf("%03d",i)
+Person$Type <- sample(0:1, 1, replace=T,prob=c(1-Parameters$perctype,Parameters$perctype))
+Person$Target <- sample(0:1, 1, replace=T,prob=c(1-Parameters$perctarget,Parameters$perctarget))
+Person$Random<- sample(0:5, 1, replace=T)
+if (Person$Type==0)
+  {Person$Indirect<- sample(0:1, 1, replace=T,prob=c(1-Parameters$indirect0,Parameters$indirect0))}
+if (Person$Type==1)
+{Person$Indirect<- sample(0:1, 1, replace=T,prob=c(1-Parameters$indirect1,1-Parameters$indirect1))}
+  Person$ClueNoInfo <-3*Person$Target+Person$Random
+  Person$ClueType <-3*Person$Target+Person$Type+Person$Random
+  Person$ClueIndirect <-3*Person$Target+Person$Indirect+Person$Random  
+  Person$TimesOnMap<-0
+  Person$IgnoreHistory<-0
+  Person$DetainHistory<-0
+  Population<-rbind(Population,Person)
+}
+
+save(Population, file = paste0("Population.",Parameters$seed,".rda"))
+write.csv(Population, file = paste0("Population.",Parameters$seed,".csv"),row.names=FALSE)
+```
+
+# Reweighting Suspicious. This chunk creates a version of population where the only 
+#change is that type 2 is rated more suspicious.
+
+#```{r}
+#PopulationY<-PopulationN
+#  for (j in 1:Parameters$pop)
+#{
+#    if (PopulationY$Type[j]=="2")
+#PopulationY$Suspicious[j] <- PopulationY$Suspicious[j]*(1+Parameters$bias)
+#    Person$SuspWeight <- 0
+#PopulationY$SuspTot <-PopulationY$Suspicious+PopulationY$SuspWeight
+#roundedsusp<-round(PopulationY$SuspTot*100)
+#PopulationY$DetainState<-sprintf("%03d",roundedsusp)
+#  }
+
+#save(PopulationY, file = paste0("/Users/gatliffe/Documents/In Process/ASM Final Project/Aletheia/Iteration/PopulationY.",Parameters$seed,".", Parameters$bias,".rda"))
+#write.csv(PopulationY, file = paste0("/Users/gatliffe/Documents/In Process/ASM Final Project/Aletheia/Iteration/PopulationY.",Parameters$seed,".", Parameters$bias,".csv"),row.names=FALSE)
+#```

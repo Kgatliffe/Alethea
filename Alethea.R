@@ -1,0 +1,316 @@
+
+#' Computes the reinforcement learning policy
+#'
+#' Computes reinforcement learning policy from a given state-action table Q.
+#' The policy is the decision-making function of the agent and defines the learning
+#' agent's behavior at a given time.
+#'
+#' @param x Variable which encodes the behavior of the agent. This can be
+#' either a \code{matrix}, \code{data.frame} or an \code{\link{rl}} object.
+#' @seealso \code{\link{ReinforcementLearning}}
+#' @return Returns the learned policy.
+#' @examples
+#' # Create exemplary state-action table (Q) with 2 actions and 3 states
+#' Q <- data.frame("up" = c(-1, 0, 1), "down" = c(-1, 1, 0))
+#'
+#' # Show best possible action in each state
+#' computePolicy(Q)
+#'
+#' @rdname computePolicy
+#' @export
+computePolicy <- function(x) {
+  UseMethod("computePolicy", x)
+}
+
+#' @export
+computePolicy.matrix <- function(x) {
+  policy <- colnames(x)[apply(x, 1, which.max)]
+  names(policy) <- rownames(x)
+  return(policy)
+}
+
+#' @export
+computePolicy.data.frame <- function(x) {
+  return(computePolicy(as.matrix(x)))
+}
+
+#' @export
+computePolicy.rl <- function(x) {
+  return(computePolicy(x$Q))
+}
+
+#' @export
+computePolicy.default <- function(x) {
+  stop("Argument invalid.")
+}
+
+#' Computes the reinforcement learning policy
+#'
+#' Deprecated. Please use [ReinforcementLearning::computePolicy()] instead.
+#'
+#' @param x Variable which encodes the behavior of the agent. This can be
+#' either a \code{matrix}, \code{data.frame} or an \code{\link{rl}} object.
+#' @seealso \code{\link{ReinforcementLearning}}
+#' @return Returns the learned policy.
+#' @rdname policy
+#' @export
+policy <- function(x) {
+  .Deprecated("computePolicy")
+  computePolicy(x)
+}
+
+
+#This function contains all of the parameters in one location so that it is easy to update the model as needed
+
+LoadParameters<-function()
+{
+  parameters = data.frame(matrix(vector(), 1, 16, dimnames=list(c(), c("seed", "cols","rows","percpop","biasYN","bias","percgroup","vulnamount",      "daylength","traveltime","detaintime","alpha","gamma","epsilon","pop","popdensity"))),stringsAsFactors=F)
+  parameters$seed=7013         # Seed 
+  parameters$biasYN=0          # Social Bias: {0=No,1=Yes}
+  parameters$bias=.1          # Amount Bias
+  parameters$perctype=.3     # Percentage of Biased Group
+  parameters$perctarget=.3     # Percentage of Biased Group
+  parameters$indirect1=.25
+  parameters$indirect2=.75
+  #parameters$vulnamount=.05    # Vulnerability
+  #parameters$perccrim=.1      # Possibly Increase in Criminal due to Vulnerability  
+  #parameters$percsusp=.25    # Possibly Increase in Suspicious due to Vulnerability
+  parameters$daylength=10       # Length of Day
+  parameters$traveltime=1     # Travel Time
+  parameters$detaintime=3      # Detain Time
+  parameters$alpha = .6       # Learning Rate [0,1]
+  parameters$gamma = .8       # Thoughtfulness Factor [0,1]
+  parameters$epsilon = .2     # Exploration Parameter [0,1]
+  parameters$N=1000            # Number of Iterations of Sample States
+  parameters$MoveReward=0
+  
+  #Parameters$pop=Parameters$rows*Parameters$cols     # Total Population: pop
+  parameters$pop=999
+  
+  return(parameters)
+}
+
+createsample <- function(population) {
+  
+  id_num0<-sample(1:nrow(population), 40, replace=F)
+  Left<-NA
+  Right<-NA
+  LeftCode<-NA
+  RightCode<-NA
+  LeftReward<-NA
+  RightReward<-NA
+  State<-NA
+  NextState<-NA
+  for(i in 1: 20)
+  {
+    id_num1<-id_num0[i]
+    id_num2<-id_num0[i+20]
+    Left[i]<-id_num1
+    Right[i]<-id_num2
+    LeftCode[i]<-population$Code[id_num1]
+    RightCode[i]<-population$Code[id_num2]
+    LeftReward[i]<-population$Reward[id_num1]
+    RightReward[i]<-population$Reward[id_num2]
+    State[i]<-paste0(LeftCode[i],'.',RightCode[i])
+    NextState[i-1]<-paste0(LeftCode[i],'.',RightCode[i])
+    NextState[i]<-"End"  
+  }
+  createsample<-data.frame(Left, Right,LeftCode, RightCode, LeftReward, RightReward, State, NextState)
+  return(createsample)
+}
+statediagramfunction <- function(createsample, ...) {
+  time = 20
+  detain = 3
+  move = 1
+  statemap<-data.frame("State"=paste0(time,".",createsample$State[1]), "Action"="Left", "Reward"=createsample$LeftReward[1], "NextState"=paste0(time-detain,".",createsample$NextState[1]))
+  nextrow<-data.frame("State"=paste0(time,".",createsample$State[1]), "Action"="Right", "Reward"=createsample$RightReward[1], "NextState"=paste0(time-detain,".",createsample$NextState[1]))
+  statemap<-rbind(statemap,nextrow)
+  nextrow<-data.frame("State"=paste0(time,".",createsample$State[1]), "Action"="None", "Reward"=0, "NextState"=paste0(time-move,".",createsample$NextState[1]))
+  statemap<-rbind(statemap,nextrow)
+  
+  for(i in 2:1000)
+  {
+    statedummy<-as.character(statemap$NextState[i])
+    flag<-0
+    if (is.na(statedummy))
+    {}
+    else if (statedummy=="End")
+    {}
+    else
+    {
+      for(j in 1:nrow(statemap))
+      {
+        if (statedummy==statemap$State[j])  
+        {
+          flag<-1
+        }
+      }
+      if(flag==0)
+      {
+        openstate<-unlist(stri_split_fixed(as.character(statedummy),".", fixed = TRUE, n=2))
+        for (k in 1:nrow(createsample))
+        {
+          if (openstate[2]==as.character(createsample$State[k]))
+          {
+            timedet<-as.numeric(openstate[1])-detain
+            timemove<-as.numeric(openstate[1])-move
+            if(as.numeric(openstate[1])>=detain)
+            {
+              nextrow<-data.frame("State"=statedummy, "Action"="Left", "Reward"=createsample$LeftReward[k], "NextState"=paste0(timedet,".",createsample$State[k+1]))
+              nextrow2<-data.frame("State"=statedummy, "Action"="Right", "Reward"=createsample$RightReward[k], 
+                                   "NextState"=paste0(timedet,".",createsample$State[k+1]))
+            } 
+            else if(as.numeric(openstate[1])<detain)
+            {
+              nextrow<-data.frame("State"=statedummy, "Action"="Left", "Reward"=createsample$LeftReward[k], "NextState"="End")
+              nextrow2<-data.frame("State"=statedummy, "Action"="Right", "Reward"=createsample$RightReward[k], 
+                                   "NextState"="End")
+            } 
+            if(as.numeric(openstate[1])>=move)
+            {
+              nextrow3<-data.frame("State"=statedummy, "Action"="None", "Reward"=0, "NextState"=paste0(timemove,".",createsample$State[k+1]))
+              statemap<-rbind(statemap, nextrow, nextrow2, nextrow3)
+            }
+            else if (as.numeric(openstate[1])<move)
+            {
+              nextrow3<-data.frame("State"=statedummy, "Action"="None", "Reward"=0, "NextState"="End")
+              statemap<-rbind(statemap, nextrow, nextrow2, nextrow3)
+            }
+          } 
+        }
+      }
+    }
+  }
+  return(statemap)
+}
+
+runRL<-function(simpledat, trainmodelold, parameters)
+{
+  # Load dataset
+  simpledat$State<-as.character(simpledat$State)
+  simpledat$NextState<-as.character(simpledat$NextState)
+  simpledat$Action<-as.character(simpledat$Action)
+  # Define reinforcement learning parameters
+  control <- list(alpha = parameters$alpha, gamma = parameters$gamma, epsilon = parameters$epsilon)
+  # Perform reinforcement learning
+  trainmodelnew <- ReinforcementLearning(simpledat, s = "State", a = "Action", r = 
+                                           "Reward", 
+                                         s_new = "NextState", iter = 1000, control = control, model=trainmodelold)
+  # Print optimal policy
+  return(trainmodelnew)
+}
+
+
+runRLinit<-function(simpledat,parameters)
+{
+  # Load dataset
+  simpledat$State<-as.character(simpledat$State)
+  simpledat$NextState<-as.character(simpledat$NextState)
+  simpledat$Action<-as.character(simpledat$Action)
+  # Define reinforcement learning parameters
+  control <- list(alpha = parameters$alpha, gamma = parameters$gamma, epsilon = parameters$epsilon)
+  
+  # Perform reinforcement learning
+  trainmodelnew <- ReinforcementLearning(simpledat, s = "State", a = "Action", r = 
+                                           "Reward", 
+                                         s_new = "NextState", iter = 1000, control = control)
+  # Print optimal policy
+  return(trainmodelnew)
+}
+
+# This is the population seeding routine.
+
+createpopulation<-function(parameters)
+{
+  set.seed=(parameters$seed)
+  
+  population = data.frame(matrix(vector(), 0, 7, dimnames=list(c(), c("ID", "Type", "Crim", "Indirect","Reward", "Susp", "Code"))),stringsAsFactors=F)
+  person = data.frame(matrix(vector(), 1, 7, dimnames=list(c(), c("ID", "Type", "Crim", "Indirect","Reward", "Susp", "Code"))),stringsAsFactors=F)
+  
+  for (i in 1:parameters$pop)
+  {
+    person$ID <-sprintf("%03d",i)
+    person$Type <- sample(1:2, 1, replace=T,prob=c(1-parameters$perctype,parameters$perctype))
+    person$Crim<- sample(1:9, 1, replace=T)
+    person$Reward=0
+    if(person$Crim>=4){person$Reward=0.25}
+    if(person$Crim>=7){person$Reward=1}
+    if (person$Type==1)
+    {
+      #  person$Indirect<- sample(0:1, 1, replace=T,prob=c(1-parameters$indirect0,parameters$indirect0))
+      person$Susp<-  round(100*(person$Crim +   rnorm(1,0,1)))
+    }
+    if (person$Type==2)
+    {
+      #  person$Indirect<- sample(0:1, 1, replace=T,prob=c(1-parameters$indirect1,1-parameters$indirect1))
+      person$Susp<-  round(100*(person$Crim +   rnorm(1,.5,1)))
+    }
+    person$Code<-paste0(person$ID,'.',person$Type,'.',person$Susp)
+    population<-rbind(population,person)
+  }
+  return(population)
+}
+
+library(stringi)
+library(dplyr)
+library(ReinforcementLearning)
+#library(binaryLogic)
+library(stats)
+library(hash)
+library(ggplot2)
+library(testthat)
+library(wesanderson)
+
+#setwd("~/Alethea")
+
+#population <- read.csv("~/Alethea/population.csv")
+
+parameters<-LoadParameters()
+
+population<-createpopulation(parameters)
+save(population, file = paste0("Population.",parameters$seed,".rda"))
+write.csv(population, file = paste0("Population.",parameters$seed,".csv"),row.names=FALSE)
+
+createsample<-createsample(population)
+train<-statediagramfunction(createsample)
+trainmodel<-runRLinit(train, parameters)
+
+for (m in 100:199)
+{
+  createsample<-createsample(population)
+  train<-statediagramfunction(createsample)
+  trainmodel<-runRL(train, trainmodel,parameters)
+  policytrain<-computePolicy(trainmodel)
+}
+View(policytrain)
+
+createsample<-createsample(population)
+test<-statediagramfunction(createsample)
+testmodel<-runRL(test,trainmodel,parameters)
+
+policytest<-computePolicy(testmodel)
+
+policytest<- data.frame(unlist(policytest))
+policytest<-cbind(policytest,State=rownames(policytest))
+policytest$State<-as.character(policytest$State)
+finalpolicy<-NA
+for (n in 1:nrow(policytest))
+{
+  policytest$State[n]<-sub('X','', policytest$State[n])
+}
+finalpolicy<-data.frame("State"=NA,"Action"=NA)
+finalpolicy2<-finalpolicy
+
+for(p in 1:nrow(test))
+{
+  for (n in 1:nrow(policytest))
+  {
+    if(policytest$State[n]==test$State[p])
+    { finalpolicy2$State<-policytest$State[n]
+    finalpolicy2$Action<-policytest$unlist.policytest.[n]
+    finalpolicy<-rbind(finalpolicy, finalpolicy2)
+    }
+  }
+}
+finalpolicy<-unique(finalpolicy)
+View(finalpolicy)
