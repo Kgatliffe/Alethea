@@ -83,7 +83,7 @@ LoadParameters<-function()
   parameters$MoveReward=0
   parameters$numtrain=100 # Number Train runs
   parameters$numtest=100 # Number of Test runs
-  parameters$itertrain=1000 #Number Train Iterations
+  parameters$itertrain=200 #Number Train Iterations
   #Parameters$pop=Parameters$rows*Parameters$cols     # Total Population: pop
   parameters$pop=999
   
