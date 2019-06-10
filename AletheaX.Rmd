@@ -65,11 +65,14 @@ policy <- function(x) {
 }
 
 ```
+#####################################
+####           Parameters        ####
+#####################################
 #This function contains all of the parameters in one location so that it is easy to #update the model as needed
 ```{r}
 LoadParameters<-function()
 {
-parameters = data.frame(matrix(vector(), 1, 16, dimnames=list(c(), c("seed", "cols","rows","percpop","biasYN","bias","percgroup","vulnamount",      "daylength","traveltime","detaintime","alpha","gamma","epsilon","pop","popdensity"))),stringsAsFactors=F)
+#parameters = data.frame(matrix(vector(), 1, 16, dimnames=list(c(), c("seed", "cols","rows","percpop","biasYN","bias","percgroup","vulnamount",      "daylength","traveltime","detaintime","alpha","gamma","epsilon","pop","popdensity"))),stringsAsFactors=F)
 parameters$seed=7013         # Seed 
 parameters$bias=.1          # Amount Bias
 parameters$percGroup=.4     # Percentage of Biased Group
@@ -78,7 +81,7 @@ parameters$indirect2=.6
 #parameters$vulnamount=.05    # Vulnerability
 #parameters$perccrim=.1      # Possibly Increase in Criminal due to Vulnerability  
 #parameters$percsusp=.25    # Possibly Increase in Suspicious due to Vulnerability
-parameters$daylength=30     # Length of Day
+parameters$daylength=5     # Length of Day
 parameters$traveltime=1     # Travel Time
 parameters$detaintime=4      # Detain Time
 parameters$alpha = .6       # Learning Rate [0,1]
@@ -88,13 +91,16 @@ parameters$MoveReward=0
 parameters$numtrain=50 # Number Train runs
 parameters$numtest=50 # Number of Test runs
 parameters$itertrain=50 #Number Train Iterations
+parameters$itertest=1 #Number Test Iterations
 #Parameters$pop=Parameters$rows*Parameters$cols     # Total Population: pop
 parameters$pop=999
 
 return(parameters)
 }
 ```
-#function 
+#####################################
+####       Create Sample         ####
+##################################### 
 ```{r}
 createsamplefunction<-function(population, parameters) {
 
@@ -204,16 +210,16 @@ nextrow<-data.frame("State"=paste0(time,".",createsample$State[1]),
                       "RightReward"=createsample$RightReward[1])
 statemap<-rbind(statemap,nextrow)
 
-for(ii in 1:1000)
+for(ii in 2:2000)
 {
-  statedummy<-as.character(statemap$NextState[ii])
+  statedummy<-as.character(createsample$NextState[ii])
     flag<-0
-    if (is.na(statedummy))
-{}
-      else if (statedummy=="End")
-{}
-  else
+    if (!is.na(statedummy))
   {
+   if (statedummy=="End")
+  {}
+  else
+    {
   for(jj in 1:nrow(statemap))
   {
     if (statedummy==statemap$State[jj])  
@@ -230,7 +236,7 @@ for(ii in 1:1000)
       {
         timedet<-as.numeric(openstate[1])-detain
         timemove<-as.numeric(openstate[1])-move
-if(as.numeric(openstate[1])>=detain)
+if(as.numeric(openstate[1])>detain)
 {
                 nextrow<-data.frame("State"=statedummy, 
                                     "Action"="Left", 
@@ -258,7 +264,7 @@ if(as.numeric(openstate[1])>=detain)
                     "RightCrim"=createsample$RightCrim[kk],
                       "RightReward"=createsample$RightReward[kk])
 } 
-        else if(as.numeric(openstate[1])<detain)
+        else if(as.numeric(openstate[1])<=detain)
 {
                 nextrow<-data.frame("State"=statedummy, 
                                     "Action"="Left", 
@@ -285,7 +291,7 @@ if(as.numeric(openstate[1])>=detain)
                     "RightCrim"=createsample$RightCrim[kk],
                       "RightReward"=createsample$RightReward[kk])
 } 
-        if(as.numeric(openstate[1])>=move)
+        if(as.numeric(openstate[1])>move)
 {
         nextrow3<-data.frame("State"=statedummy, 
                              "Action"="None", 
@@ -301,7 +307,7 @@ if(as.numeric(openstate[1])>=detain)
                       "RightReward"=createsample$RightReward[kk])
         statemap<-rbind(statemap, nextrow, nextrow2, nextrow3)
         }
-        else if (as.numeric(openstate[1])<move)
+        else if (as.numeric(openstate[1])<=move)
 {
         nextrow3<-data.frame("State"=statedummy, 
                              "Action"="None", 
@@ -321,6 +327,7 @@ if(as.numeric(openstate[1])>=detain)
   }
   }
 }
+    }
 }
 return(statemap)
 }
