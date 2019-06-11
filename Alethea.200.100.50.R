@@ -88,9 +88,9 @@ LoadParameters<-function()
   parameters$gamma = .8       # Thoughtfulness Factor [0,1]
   parameters$epsilon = .3     # Exploration Parameter [0,1]
   parameters$MoveReward=0
-  parameters$numtrain=10 # Number Train runs
-  parameters$numtest=10 # Number of Test runs
-  parameters$itertrain=10 #Number Train Iterations
+  parameters$numtrain=200 # Number Train runs
+  parameters$numtest=100 # Number of Test runs
+  parameters$itertrain=50 #Number Train Iterations
   #Parameters$pop=Parameters$rows*Parameters$cols     # Total Population: pop
   parameters$pop=999
   

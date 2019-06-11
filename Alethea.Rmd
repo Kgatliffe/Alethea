@@ -2,7 +2,9 @@
 title: "R Notebook"
 output: html_notebook
 ---
-
+##########################
+####
+##########################
 ```{r}
 #' Computes the reinforcement learning policy
 #'
@@ -65,7 +67,11 @@ policy <- function(x) {
 }
 
 ```
-#This function contains all of the parameters in one location so that it is easy to #update the model as needed
+###################################################################
+## This function contains all of the parameters in one location  ##
+## so that it is easy to update the model as needed              ##  
+###################################################################
+
 ```{r}
 LoadParameters<-function()
 {
@@ -78,23 +84,25 @@ parameters$indirect2=.6
 #parameters$vulnamount=.05    # Vulnerability
 #parameters$perccrim=.1      # Possibly Increase in Criminal due to Vulnerability  
 #parameters$percsusp=.25    # Possibly Increase in Suspicious due to Vulnerability
-parameters$daylength=30     # Length of Day
+parameters$daylength=28     # Length of Day
 parameters$traveltime=1     # Travel Time
 parameters$detaintime=4      # Detain Time
 parameters$alpha = .6       # Learning Rate [0,1]
 parameters$gamma = .8       # Thoughtfulness Factor [0,1]
 parameters$epsilon = .3     # Exploration Parameter [0,1]
 parameters$MoveReward=0
-parameters$numtrain=50 # Number Train runs
-parameters$numtest=50 # Number of Test runs
-parameters$itertrain=50 #Number Train Iterations
+parameters$numtrain=10 # Number Train runs
+parameters$numtest=10 # Number of Test runs
+parameters$itertrain=10 #Number Train Iterations
 #Parameters$pop=Parameters$rows*Parameters$cols     # Total Population: pop
 parameters$pop=999
 
 return(parameters)
 }
 ```
-#function 
+###################################################################
+##
+###################################################################
 ```{r}
 createsamplefunction<-function(population, parameters) {
 
@@ -158,7 +166,9 @@ createRLsample<-data.frame(Left,LeftGroup, LeftSusp,LeftSuspCode,LeftDirectCode,
 return(createRLsample)
 }
 ```
-
+###################################################################
+##
+###################################################################
 ```{r}
 statediagramfunction <- function(createsample, parameters,flag) {
 time = parameters$daylength
@@ -325,7 +335,9 @@ if(as.numeric(openstate[1])>=detain)
 return(statemap)
 }
 ```
-#function
+###################################################################
+##
+###################################################################
 ```{r}
 runRL<-function(RLdat, trainmodelold, parameters)
 {
@@ -344,6 +356,9 @@ return(trainmodelnew)
 }
 
 ```
+###################################################################
+##
+###################################################################
 #This is the initial reinforcement learning routine.
 ```{r}
 runRLinit<-function(RLdat,parameters)
@@ -365,7 +380,9 @@ return(trainmodelnew)
 
 ```
 
-# This is the population seeding routine.
+###################################################################
+## This is the population seeding routine.
+###################################################################
 
 ```{r}
 
@@ -405,7 +422,9 @@ return(population)
 }
 
 ```
-#Function Policywork
+###################################################################
+## Function Policywork
+###################################################################
 ```{r}
 policywork<-function(policytest,test)
 {
@@ -447,6 +466,9 @@ finalpolicy<-na.omit(finalpolicy)
 return(finalpolicy)
 }
 ```
+########################
+##
+########################
 ```{r}
 RLFinalSolution<-function(finalpolicy)
 {
@@ -476,7 +498,9 @@ if (RLsolution$Action[kk]=="Right")
 return(RLsolution)
 }
 ```
-
+###################################################################
+##
+###################################################################
 
 ```{r}
 library(stringi)
@@ -503,17 +527,23 @@ createsample<-createsamplefunction(population, parameters)
 createsampleSusp<-createsample
 createsampleDirect<-createsample
 createsampleIndirect<-createsample
+createsamplePerfect<-createsample
 ```
+###################################################################
+##
+###################################################################
 ```{r}
 for(i in 1:nrow(createsample))
 {
 createsampleSusp$State[i]<-createsample$SuspState[i]
 createsampleDirect$State[i]<-createsample$DirectState[i]
 createsampleIndirect$State[i]<-createsample$IndirectState[i] 
+createsamplePerfect$State[i]<-createsample$PerfectState[i]
 
 createsampleSusp$NextState[i]<-createsample$SuspNextState[i]
 createsampleDirect$NextState[i]<-createsample$DirectNextState[i]
 createsampleIndirect$NextState[i]<-createsample$IndirectNextState[i]
+createsamplePerfect$NextState[i]<-createsample$PerfectNextState[i]
 }
 
 trainSusp<-statediagramfunction(createsampleSusp, parameters)
@@ -555,7 +585,9 @@ trainmodelIndirect<-runRL(trainIndirect, trainmodelIndirect,parameters)
 policytrainIndirect<-computePolicy(trainmodelIndirect)
 }
 ```
-
+###################################################################
+##
+###################################################################
 ```{r}
 RLsolutionSusp<-NA
 RLsolutionDirect<-NA
@@ -617,5 +649,32 @@ table(RLsolutionIndirect$Group)
 save(RLsolutionSusp, file = paste0("RLsolutionSusp.daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
 save(RLsolutionDirect, file = paste0("RLsolutionDirect.daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
 save(RLsolutionIndirect, file = paste0("RLsolutionIndirect.daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
+```
+
+```{r}
+testmodelIdealSusp<-runRLinit(testSusp,parameters)
+testmodelIdealDirect<-runRLinit(testDirect,parameters)
+testmodelIdealIndirect<-runRLinit(testIndirect,parameters)
+
+policytestIdealSusp<-computePolicy(testmodelIdealSusp)
+finalpolicyIdealSusp<-policywork(policytestIdealSusp,testSusp)
+
+policytestIdealDirect<-computePolicy(testmodelIdealDirect)
+finalpolicyIdealDirect<-policywork(policytestIdealDirect,testDirect)
+
+policytestIdealIndirect<-computePolicy(testmodelIdealIndirect)
+finalpolicyIdealIndirect<-policywork(policytestIdealIndirect, testIndirect)
+
+RLsolutionSuspIdeal<-RLFinalSolution(finalpolicyIdealSusp)
+RLsolutionDirectIdeal<-RLFinalSolution(finalpolicyIdealDirect)
+RLsolutionIndirectIdeal<-RLFinalSolution(finalpolicyIdealIndirect)
+
+table(RLsolutionSuspIdeal$Group)
+table(RLsolutionDirectIdeal$Group)
+table(RLsolutionIndirectIdeal$Group)
+
+save(RLsolutionSuspIdeal, file = paste0("RLsolutionSuspIdeal.itertrain.",parameters$itertrain,".rda"))
+save(RLsolutionDirectIdeal, file = paste0("RLsolutionDirectIdeal.itertrain.",parameters$itertrain,".rda"))
+save(RLsolutionIndirect, file = paste0("RLsolutionIndirectIdeal.itertrain.",parameters$itertrain,".rda"))
 ```
 
