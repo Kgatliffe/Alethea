@@ -1,11 +1,10 @@
-```{r}
 LoadParameters<-function()
 {
-    parameters = data.frame(matrix(vector(), 1, 15, dimnames=list(c(), c("seed", "numtrain","numtest","itertrain","percGroup","indirect1","indirect2","daylength",      "traveltime","detaintime","alpha","gamma","epsilon","pop","movereward"))),stringsAsFactors=F)
-  parameters$seed=7013         # Seed: 7013, 5510, 2671, 5481, 1994, 9326, 3214, 7816,6882,5557 
-  parameters$numtrain=1 # Number Train runs
-  parameters$numtest=1 # Number of Test runs
-  parameters$itertrain=1 #Number Train Iterations
+  parameters = data.frame(matrix(vector(), 1, 15, dimnames=list(c(), c("seed", "numtrain","numtest","itertrain","percGroup","indirect1","indirect2","daylength",      "traveltime","detaintime","alpha","gamma","epsilon","pop","movereward"))),stringsAsFactors=F)
+  parameters$seed=5481         # Seed: 7013, 5510, 2671, 5481, 1994, 9326, 3214, 7816,6882,5557 
+  parameters$numtrain=50 # Number Train runs
+  parameters$numtest=20 # Number of Test runs
+  parameters$itertrain=25 #Number Train Iterations
   
   #parameters$bias=.1          # Amount Bias
   parameters$percGroup=.3     # Percentage of Biased Group
@@ -539,11 +538,11 @@ RLSolution<-function(finalpolicy)
 ################################################
 BestPolicy<-function(test,parameters)
 {
-testmodelIdeal<-runRLinit(test,parameters)
-policytestIdeal<-computePolicy(testmodelIdeal)
-finalpolicyIdeal<-policywork(policytestIdeal,test)
-RLsolutionIdeal<-RLSolution(finalpolicyIdeal)
-return(RLsolutionIdeal)
+  testmodelIdeal<-runRLinit(test,parameters)
+  policytestIdeal<-computePolicy(testmodelIdeal)
+  finalpolicyIdeal<-policywork(policytestIdeal,test)
+  RLsolutionIdeal<-RLSolution(finalpolicyIdeal)
+  return(RLsolutionIdeal)
 }
 ################################################
 ##
@@ -810,6 +809,3 @@ RLsolutionRandomIdeal<-BestPolicy(testRandom,parameters)
 save(RLsolutionSuspIdeal,RLsolutionDirectIdeal,RLsolutionIndirect,RLsolutionCrimIdeal,RLsolutionRandomIdeal, file = paste0("RLsolutionIdeal.daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
 
 save(proportionSusp,proportionDirect,proportionIndirect,proportionCrim,proportionRandom,file =paste0("proportion.",parameters$seed,".",parameters$numtrain,".",parameters$numtest,".",parameters$itertrain,".rda"))
-
-```
-
