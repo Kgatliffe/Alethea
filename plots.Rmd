@@ -1,0 +1,64 @@
+```{r}
+load("/Users/gatliffe/Desktop/proportion.1994.50.20.25.rda")
+proportionSusp1<-proportionSusp
+proportionDirect1<-proportionDirect
+proportionIndirect1<-proportionIndirect
+proportionCrim1<-proportionCrim
+proportionRandom1<-proportionRandom
+ load("/Users/gatliffe/Desktop/proportion.7013.50.20.25.rda")
+proportionSusp1<-rbind(proportionSusp1,proportionSusp)
+proportionDirect1<-rbind(proportionDirect1,proportionDirect)
+proportionIndirect1<-rbind(proportionIndirect1,proportionIndirect)
+proportionCrim1<-rbind(proportionCrim1,proportionCrim)
+proportionRandom1<-rbind(proportionRandom1,proportionRandom) 
+load("/Users/gatliffe/Desktop/proportion.5510.50.20.25.rda") 
+proportionSusp1<-rbind(proportionSusp1,proportionSusp)
+proportionDirect1<-rbind(proportionDirect1,proportionDirect)
+proportionIndirect1<-rbind(proportionIndirect1,proportionIndirect)
+proportionCrim1<-rbind(proportionCrim1,proportionCrim)
+proportionRandom1<-rbind(proportionRandom1,proportionRandom)
+load("/Users/gatliffe/Desktop/proportion.2671.50.20.25.rda")
+proportionSusp1<-rbind(proportionSusp1,proportionSusp)
+proportionDirect1<-rbind(proportionDirect1,proportionDirect)
+proportionIndirect1<-rbind(proportionIndirect1,proportionIndirect)
+proportionCrim1<-rbind(proportionCrim1,proportionCrim)
+proportionRandom1<-rbind(proportionRandom1,proportionRandom)
+load("/Users/gatliffe/Desktop/proportion.5481.50.20.25.rda")
+proportionSusp1<-rbind(proportionSusp1,proportionSusp)
+proportionDirect1<-rbind(proportionDirect1,proportionDirect)
+proportionIndirect1<-rbind(proportionIndirect1,proportionIndirect)
+proportionCrim1<-rbind(proportionCrim1,proportionCrim)
+proportionRandom1<-rbind(proportionRandom1,proportionRandom)
+
+mydf <- data.frame(y=c(proportionSusp1,proportionDirect1,proportionIndirect1,proportionCrim1,proportionRandom1),
+x=c(rep(1,length(proportionSusp1)),rep(2,length(proportionDirect1)),
+    rep(3,length(proportionIndirect1)),rep(4,length(proportionCrim1)),
+    rep(5,length(proportionRandom1))))
+with(mydf, boxplot(y~x))
+```
+
+```{r}
+summary(proportionSusp)
+ summary    (proportionDirect)
+     summary(proportionIndirect)
+     summary(proportionCrim)
+       summary(proportionRandom)
+
+       sd(proportionSusp)
+ sd(proportionDirect)
+     sd(proportionIndirect)
+     sd(proportionCrim)
+       sd(proportionRandom)
+       
+        me <- qt(.95,9)*sd(proportionSusp)/sqrt(10)
+        mean(proportionSusp) - me
+        mean(proportionSusp) + me
+```
+
+```{r}
+View(proportionSusp)
+ View    (proportionDirect)
+     View(proportionIndirect)
+     View(proportionCrim)
+       View(proportionRandom)
+```

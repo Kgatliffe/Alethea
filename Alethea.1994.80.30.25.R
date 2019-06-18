@@ -1,15 +1,15 @@
 LoadParameters<-function()
 {
   parameters = data.frame(matrix(vector(), 1, 15, dimnames=list(c(), c("seed", "numtrain","numtest","itertrain","percGroup","indirect1","indirect2","daylength",      "traveltime","detaintime","alpha","gamma","epsilon","pop","movereward"))),stringsAsFactors=F)
-  parameters$seed=5510        # Seed: 7013, 5510, 2671, 5481, 1994, 9326, 3214, 7816,6882,5557 
-  parameters$numtrain=50 # Number Train runs
-  parameters$numtest=20 # Number of Test runs
+  parameters$seed=1994       # Seed: 7013, 5510, 2671, 5481, 1994, 9326, 3214, 7816,6882,5557 
+  parameters$numtrain=80 # Number Train runs
+  parameters$numtest=30 # Number of Test runs
   parameters$itertrain=25 #Number Train Iterations
   
   #parameters$bias=.1          # Amount Bias
   parameters$percGroup=.3     # Percentage of Biased Group
-  parameters$indirect1=.4
-  parameters$indirect2=.6
+  parameters$indirect1=.2
+  parameters$indirect2=.8
   parameters$crim=4
   #parameters$vulnamount=.05    # Vulnerability
   #parameters$perccrim=.1      # Possibly Increase in Criminal due to Vulnerability  
@@ -569,8 +569,6 @@ testpopulation <- population[-test_rand, ]
 
 save(testpopulation, file = paste0("TestPopulation.",parameters$seed,".rda"))
 save(trainpopulation, file = paste0("TrainPopulation.",parameters$seed,".rda"))
-write.csv(trainpopulation, file = paste0("TrainPopulation.",parameters$seed,".csv"),row.names=FALSE)
-write.csv(testpopulation, file = paste0("TestPopulation.",parameters$seed,".csv"),row.names=FALSE)
 
 createsample<-createsamplefunction(trainpopulation, parameters)
 createsampleSusp<-createsample

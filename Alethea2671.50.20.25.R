@@ -1,7 +1,7 @@
 LoadParameters<-function()
 {
   parameters = data.frame(matrix(vector(), 1, 15, dimnames=list(c(), c("seed", "numtrain","numtest","itertrain","percGroup","indirect1","indirect2","daylength",      "traveltime","detaintime","alpha","gamma","epsilon","pop","movereward"))),stringsAsFactors=F)
-  parameters$seed=2671         # Seed: 7013, 5510, 2671, 5481, 1994, 9326, 3214, 7816,6882,5557 
+  parameters$seed=2671        # Seed: 7013, 5510, 2671, 5481, 1994, 9326, 3214, 7816,6882,5557 
   parameters$numtrain=50 # Number Train runs
   parameters$numtest=20 # Number of Test runs
   parameters$itertrain=25 #Number Train Iterations

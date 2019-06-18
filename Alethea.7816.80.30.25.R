@@ -1,5 +1,31 @@
-
-
+LoadParameters<-function()
+{
+  parameters = data.frame(matrix(vector(), 1, 15, dimnames=list(c(), c("seed", "numtrain","numtest","itertrain","percGroup","indirect1","indirect2","daylength",      "traveltime","detaintime","alpha","gamma","epsilon","pop","movereward"))),stringsAsFactors=F)
+  parameters$seed=7816       # Seed: 7013, 5510, 2671, 5481, 1994, 9326, 3214, 7816,6882,5557 
+  parameters$numtrain=80 # Number Train runs
+  parameters$numtest=30 # Number of Test runs
+  parameters$itertrain=25 #Number Train Iterations
+  
+  #parameters$bias=.1          # Amount Bias
+  parameters$percGroup=.3     # Percentage of Biased Group
+  parameters$indirect1=.2
+  parameters$indirect2=.8
+  parameters$crim=4
+  #parameters$vulnamount=.05    # Vulnerability
+  #parameters$perccrim=.1      # Possibly Increase in Criminal due to Vulnerability  
+  #parameters$percsusp=.25    # Possibly Increase in Suspicious due to Vulnerability
+  parameters$daylength=28     # Length of Day
+  parameters$traveltime=1     # Travel Time
+  parameters$detaintime=4      # Detain Time
+  parameters$alpha = .6       # Learning Rate [0,1]
+  parameters$gamma = .8       # Thoughtfulness Factor [0,1]
+  parameters$epsilon = .3     # Exploration Parameter [0,1]
+  parameters$movereward=0
+  #Parameters$pop=Parameters$rows*Parameters$cols     # Total Population: pop
+  parameters$pop=3000
+  
+  return(parameters)
+}
 ################################################
 ##
 ################################################
@@ -70,34 +96,6 @@ policy <- function(x) {
 ## in one location so that it is easy to update 
 ## the model as needed       
 ################################################
-
-
-LoadParameters<-function()
-{
-  parameters = data.frame(matrix(vector(), 1, 16, dimnames=list(c(), c("seed", "cols","rows","percpop","biasYN","bias","percgroup","vulnamount",      "daylength","traveltime","detaintime","alpha","gamma","epsilon","pop","popdensity"))),stringsAsFactors=F)
-  parameters$seed=7013         # Seed 
-  parameters$bias=.1          # Amount Bias
-  parameters$percGroup=.4     # Percentage of Biased Group
-  parameters$indirect1=.4
-  parameters$indirect2=.6
-  #parameters$vulnamount=.05    # Vulnerability
-  #parameters$perccrim=.1      # Possibly Increase in Criminal due to Vulnerability  
-  #parameters$percsusp=.25    # Possibly Increase in Suspicious due to Vulnerability
-  parameters$daylength=28     # Length of Day
-  parameters$traveltime=1     # Travel Time
-  parameters$detaintime=4      # Detain Time
-  parameters$alpha = .6       # Learning Rate [0,1]
-  parameters$gamma = .8       # Thoughtfulness Factor [0,1]
-  parameters$epsilon = .3     # Exploration Parameter [0,1]
-  parameters$MoveReward=0
-  parameters$numtrain=50 # Number Train runs
-  parameters$numtest=20 # Number of Test runs
-  parameters$itertrain=25 #Number Train Iterations
-  #Parameters$pop=Parameters$rows*Parameters$cols     # Total Population: pop
-  parameters$pop=3000
-  
-  return(parameters)
-}
 
 ################################################
 ##This creates the set of choices
@@ -435,7 +433,7 @@ createpopulation<-function(parameters)
   {
     person$ID <-sprintf("%03d",ii)
     person$Group <- sample(1:2, 1, replace=T,prob=c(1-parameters$percGroup,parameters$percGroup))
-    person$Crim<- sample(1:4, 1, replace=T)
+    person$Crim<- sample(1:parameters$crim, 1, replace=T)
     person$Reward=person$Crim
     if (person$Group==1)
     {
@@ -535,7 +533,17 @@ RLSolution<-function(finalpolicy)
     } }
   return(RLsolution)
 }
-
+################################################
+##
+################################################
+BestPolicy<-function(test,parameters)
+{
+  testmodelIdeal<-runRLinit(test,parameters)
+  policytestIdeal<-computePolicy(testmodelIdeal)
+  finalpolicyIdeal<-policywork(policytestIdeal,test)
+  RLsolutionIdeal<-RLSolution(finalpolicyIdeal)
+  return(RLsolutionIdeal)
+}
 ################################################
 ##
 ################################################
@@ -561,8 +569,6 @@ testpopulation <- population[-test_rand, ]
 
 save(testpopulation, file = paste0("TestPopulation.",parameters$seed,".rda"))
 save(trainpopulation, file = paste0("TrainPopulation.",parameters$seed,".rda"))
-write.csv(trainpopulation, file = paste0("TrainPopulation.",parameters$seed,".csv"),row.names=FALSE)
-write.csv(testpopulation, file = paste0("TestPopulation.",parameters$seed,".csv"),row.names=FALSE)
 
 createsample<-createsamplefunction(trainpopulation, parameters)
 createsampleSusp<-createsample
@@ -574,6 +580,21 @@ createsampleRandom<-createsample
 ################################################
 ##
 ################################################
+RLsolutionTrainSusp<-NA
+RLsolutionTrainDirect<-NA
+RLsolutionTrainIndirect<-NA
+RLsolutionTrainCrim<-NA
+RLsolutionTrainRandom<-NA
+RLtableTrainSusp<-NA
+RLtableTrainDirect<-NA
+RLtableTrainIndirect<-NA
+RLtableTrainCrim<-NA
+RLtableTrainRandom<-NA
+proportionTrainSusp<-NA
+proportionTrainDirect<-NA
+proportionTrainIndirect<-NA
+proportionTrainCrim<-NA
+proportionTrainRandom<-NA
 
 for(i in 1:nrow(createsample))
 {
@@ -610,6 +631,7 @@ trainmodelRandom<-runRLinit(trainRandom, parameters)
 
 for (m in 1:parameters$numtrain)
 {
+  
   RLtrainsample<-createsamplefunction(trainpopulation, parameters)
   RLtrainsampleSusp<-RLtrainsample
   RLtrainsampleDirect<-RLtrainsample
@@ -639,24 +661,86 @@ for (m in 1:parameters$numtrain)
   trainSusp<-statediagramfunction(RLtrainsampleSusp, parameters)
   trainmodelSusp<-runRL(trainSusp, trainmodelSusp,parameters)
   policytrainSusp<-computePolicy(trainmodelSusp)
+  finalpolicytrainSusp<-policywork(policytrainSusp,trainSusp)
+  RLsolutionTrainSusp2<-RLSolution(finalpolicytrainSusp)
+  
+  RLtableTrainSusp2<-as.data.frame(table(RLsolutionTrainSusp2$Group))
+  proportionTrainSusp2<-RLtableTrainSusp2[2,2]/(RLtableTrainSusp2[1,2]+RLtableTrainSusp2[2,2])
+  
+  RLsolutionTrainSusp<-rbind(RLsolutionTrainSusp,RLsolutionTrainSusp2)
+  RLtableTrainSusp<-rbind(RLtableTrainSusp,RLtableTrainSusp2)
+  proportionTrainSusp<-rbind(proportionTrainSusp,proportionTrainSusp2)
   
   trainDirect<-statediagramfunction(RLtrainsampleDirect, parameters)
   trainmodelDirect<-runRL(trainDirect, trainmodelDirect,parameters)
   policytrainDirect<-computePolicy(trainmodelDirect)
+  finalpolicytrainDirect<-policywork(policytrainDirect,trainDirect)
+  RLsolutionTrainDirect2<-RLSolution(finalpolicytrainDirect)
+  
+  RLtableTrainDirect2<-as.data.frame(table(RLsolutionTrainDirect2$Group))
+  proportionTrainDirect2<-RLtableTrainDirect2[2,2]/(RLtableTrainDirect2[1,2]+RLtableTrainDirect2[2,2])
+  
+  RLsolutionTrainDirect<-rbind(RLsolutionTrainDirect,RLsolutionTrainDirect2)
+  RLtableTrainDirect<-rbind(RLtableTrainDirect,RLtableTrainDirect2)
+  proportionTrainDirect<-rbind(proportionTrainDirect,proportionTrainDirect2)
   
   trainIndirect<-statediagramfunction(RLtrainsampleIndirect, parameters)
   trainmodelIndirect<-runRL(trainIndirect, trainmodelIndirect,parameters)
   policytrainIndirect<-computePolicy(trainmodelIndirect)
+  finalpolicytrainIndirect<-policywork(policytrainIndirect,trainIndirect)
+  RLsolutionTrainIndirect2<-RLSolution(finalpolicytrainIndirect)
+  
+  RLtableTrainIndirect2<-as.data.frame(table(RLsolutionTrainIndirect2$Group))
+  proportionTrainIndirect2<-RLtableTrainIndirect2[2,2]/(RLtableTrainIndirect2[1,2]+RLtableTrainIndirect2[2,2])
+  
+  RLsolutionTrainIndirect<-rbind(RLsolutionTrainIndirect,RLsolutionTrainIndirect2)
+  RLtableTrainIndirect<-rbind(RLtableTrainIndirect,RLtableTrainIndirect2)
+  proportionTrainIndirect<-rbind(proportionTrainIndirect,proportionTrainIndirect2)
   
   trainCrim<-statediagramfunction(RLtrainsampleCrim, parameters)
   trainmodelCrim<-runRL(trainCrim, trainmodelCrim,parameters)
   policytrainCrim<-computePolicy(trainmodelCrim)
   
+  finalpolicytrainCrim<-policywork(policytrainCrim,trainCrim)
+  RLsolutionTrainCrim2<-RLSolution(finalpolicytrainCrim)
+  
+  RLtableTrainCrim2<-as.data.frame(table(RLsolutionTrainCrim2$Group))
+  proportionTrainCrim2<-RLtableTrainCrim2[2,2]/(RLtableTrainCrim2[1,2]+RLtableTrainCrim2[2,2])
+  
+  RLsolutionTrainCrim<-rbind(RLsolutionTrainCrim,RLsolutionTrainCrim2)
+  RLtableTrainCrim<-rbind(RLtableTrainCrim,RLtableTrainCrim2)
+  proportionTrainCrim<-rbind(proportionTrainCrim,proportionTrainCrim2)
   
   trainRandom<-statediagramfunction(RLtrainsampleRandom, parameters)
   trainmodelRandom<-runRL(trainRandom, trainmodelRandom,parameters)
   policytrainRandom<-computePolicy(trainmodelRandom)
+  
+  finalpolicytrainRandom<-policywork(policytrainRandom,trainRandom)
+  RLsolutionTrainRandom2<-RLSolution(finalpolicytrainRandom)
+  RLtableTrainRandom2<-as.data.frame(table(RLsolutionTrainRandom2$Group))
+  proportionTrainRandom2<-RLtableTrainRandom2[2,2]/(RLtableTrainRandom2[1,2]+RLtableTrainRandom2[2,2])
+  
+  RLsolutionTrainRandom<-rbind(RLsolutionTrainRandom,RLsolutionTrainRandom2)
+  RLtableTrainRandom<-rbind(RLtableTrainRandom,RLtableTrainRandom2)
+  proportionTrainRandom<-rbind(proportionTrainRandom,proportionTrainRandom2)
 }
+RLtableTrainSusp <- na.omit(RLtableTrainSusp)
+RLtableTrainDirect <- na.omit(RLtableTrainDirect)
+RLtableTrainIndirect <- na.omit(RLtableTrainIndirect)
+RLtableTrainCrim <- na.omit(RLtableTrainCrim)
+RLtableTrainRandom <- na.omit(RLtableTrainRandom)
+
+proportionTrainSusp <- na.omit(proportionTrainSusp)
+proportionTrainDirect <- na.omit(proportionTrainDirect)
+proportionTrainIndirect <- na.omit(proportionTrainIndirect)
+proportionTrainCrim <- na.omit(proportionTrainCrim)
+proportionTrainRandom <- na.omit(proportionTrainRandom)
+
+save(proportionTrainSusp,proportionTrainDirect,proportionTrainIndirect,
+     proportionTrainCrim,proportionTrainRandom, 
+     file = paste0("proportionTrain.seed.",parameters$seed,"daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
+
+
 
 ################################################
 ##
@@ -785,68 +869,21 @@ proportionIndirect <- na.omit(proportionIndirect)
 proportionCrim <- na.omit(proportionCrim)
 proportionRandom <- na.omit(proportionRandom)
 
-proportionDF<-cbind(proportionSusp,proportionDirect,proportionIndirect,proportionCrim,proportionRandom)
-boxplot(proportionDF)
-print("Suspicion")
-table(RLsolutionSusp$Group)
-save(RLsolutionSusp, file = paste0("RLsolutionSusp.daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
-
-print("Direct")
-table(RLsolutionDirect$Group)
-save(RLsolutionDirect, file = paste0("RLsolutionDirect.daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
-
-print("Indirect")
-table(RLsolutionIndirect$Group)
-save(RLsolutionIndirect, file = paste0("RLsolutionIndirect.daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
-
-print("Criminal")
-table(RLsolutionCrim$Group)
-save(RLsolutionCrim, file = paste0("RLsolutionCrim.daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
-
-print("Random")
-table(RLsolutionRandom$Group)
-save(RLsolutionRandom, file = paste0("RLsolutionRandom.daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
-
+save(RLsolutionSusp,RLsolutionDirect,RLsolutionIndirect,RLsolutionCrim,RLsolutionRandom, file = paste0("RLsolution.daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
 
 ################################################
 ##
 ################################################
 
-testmodelIdealSusp<-runRLinit(testSusp,parameters)
-policytestIdealSusp<-computePolicy(testmodelIdealSusp)
-finalpolicyIdealSusp<-policywork(policytestIdealSusp,testSusp)
-RLsolutionSuspIdeal<-RLSolution(finalpolicyIdealSusp)
-table(RLsolutionSuspIdeal$Group)
-save(RLsolutionSuspIdeal, file = paste0("RLsolutionSuspIdeal.itertrain.",parameters$itertrain,".rda"))
+RLsolutionSuspIdeal<-BestPolicy(testSusp,parameters)
+RLsolutionDirectIdeal<-BestPolicy(testDirect,parameters)
+RLsolutionIndirectIdeal<-BestPolicy(testIndirect,parameters)
+RLsolutionCrimIdeal<-BestPolicy(testCrim,parameters)
+RLsolutionRandomIdeal<-BestPolicy(testRandom,parameters)
 
-testmodelIdealDirect<-runRLinit(testDirect,parameters)
-policytestIdealDirect<-computePolicy(testmodelIdealDirect)
-finalpolicyIdealDirect<-policywork(policytestIdealDirect,testDirect)
-RLsolutionDirectIdeal<-RLSolution(finalpolicyIdealDirect)
-table(RLsolutionDirectIdeal$Group)
-save(RLsolutionDirectIdeal, file = paste0("RLsolutionDirectIdeal.itertrain.",parameters$itertrain,".rda"))
 
-testmodelIdealIndirect<-runRLinit(testIndirect,parameters)
-policytestIdealIndirect<-computePolicy(testmodelIdealIndirect)
-finalpolicyIdealIndirect<-policywork(policytestIdealIndirect, testIndirect)
-RLsolutionIndirectIdeal<-RLSolution(finalpolicyIdealIndirect)
-table(RLsolutionIndirectIdeal$Group)
-save(RLsolutionIndirect, file = paste0("RLsolutionIndirectIdeal.itertrain.",parameters$itertrain,".rda"))
+save(RLsolutionSuspIdeal,RLsolutionDirectIdeal,RLsolutionIndirect,RLsolutionCrimIdeal,RLsolutionRandomIdeal, file = paste0("RLsolutionIdeal.daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
 
-testmodelIdealCrim<-runRLinit(testCrim,parameters)
-policytestIdealCrim<-computePolicy(testmodelIdealCrim)
-finalpolicyIdealCrim<-policywork(policytestIdealCrim,testCrim)
-RLsolutionCrimIdeal<-RLSolution(finalpolicyIdealCrim)
-table(RLsolutionCrimIdeal$Group)
-save(RLsolutionCrimIdeal, file = paste0("RLsolutionCrimIdeal.itertrain.",parameters$itertrain,".rda"))
-
-testmodelIdealRandom<-runRLinit(testRandom,parameters)
-policytestIdealRandom<-computePolicy(testmodelIdealRandom)
-finalpolicyIdealRandom<-policywork(policytestIdealRandom,testRandom)
-RLsolutionRandomIdeal<-RLSolution(finalpolicyIdealRandom)
-table(RLsolutionRandomIdeal$Group)
-save(RLsolutionRandomIdeal, file = paste0("RLsolutionRandomIdeal.itertrain.",parameters$itertrain,".rda"))
-save(proportionDF, file ="proportionDFY.rda")
-
+save(proportionSusp,proportionDirect,proportionIndirect,proportionCrim,proportionRandom,file =paste0("proportion.",parameters$seed,".",parameters$numtrain,".",parameters$numtest,".",parameters$itertrain,".rda"))
 
 
