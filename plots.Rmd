@@ -78,3 +78,13 @@ x=c(rep(1,length(proportionTrainSusp)),rep(2,length(proportionTrainDirect)),
 with(mydf, boxplot(y~x))
 ```
 
+```{r}
+ggplot(trainpopulation, aes(x=Crim, y=Susp, color=Group)) +
+    geom_point()+ geom_smooth(method = "lm")+ scale_color_manual(values=c('#63b8ff','#e066ff'))
+
+```
+
+```{r}
+table(trainpopulation$Indirect, trainpopulation$Group)
+```
+
