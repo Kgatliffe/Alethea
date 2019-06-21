@@ -62,3 +62,19 @@ View(proportionSusp)
      View(proportionCrim)
        View(proportionRandom)
 ```
+```{r}
+mydf <- data.frame(y=c(proportionSusp,proportionDirect,proportionIndirect,proportionCrim,proportionRandom),
+x=c(rep(1,length(proportionSusp)),rep(2,length(proportionDirect)),
+    rep(3,length(proportionIndirect)),rep(4,length(proportionCrim)),
+    rep(5,length(proportionRandom))))
+with(mydf, boxplot(y~x))
+```
+
+```{r}
+mydf <- data.frame(y=c(proportionTrainSusp,proportionTrainDirect,proportionTrainIndirect,proportionTrainCrim,proportionTrainRandom),
+x=c(rep(1,length(proportionTrainSusp)),rep(2,length(proportionTrainDirect)),
+    rep(3,length(proportionTrainIndirect)),rep(4,length(proportionTrainCrim)),
+    rep(5,length(proportionTrainRandom))))
+with(mydf, boxplot(y~x))
+```
+

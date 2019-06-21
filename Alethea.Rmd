@@ -3,9 +3,9 @@ LoadParameters<-function()
 {
   parameters = data.frame(matrix(vector(), 1, 15, dimnames=list(c(), c("seed", "numtrain","numtest","itertrain","percGroup","indirect1","indirect2","daylength",      "traveltime","detaintime","alpha","gamma","epsilon","pop","movereward"))),stringsAsFactors=F)
   parameters$seed=7013       # Seed: 7013, 5510, 2671, 5481, 1994, 9326, 3214, 7816,6882,5557 
-  parameters$numtrain=50 # Number Train runs
-  parameters$numtest=20 # Number of Test runs
-  parameters$itertrain=25 #Number Train Iterations
+  parameters$numtrain=2 # Number Train runs
+  parameters$numtest=2 # Number of Test runs
+  parameters$itertrain=2 #Number Train Iterations
   
   #parameters$bias=.1          # Amount Bias
   parameters$percGroup=.3     # Percentage of Biased Group
@@ -743,7 +743,8 @@ save(proportionTrainSusp,proportionTrainDirect,proportionTrainIndirect,
      proportionTrainCrim,proportionTrainRandom, 
      file = paste0("proportionTrain.seed.",parameters$seed,"daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
 
-
+save(trainmodelSusp,trainmodelDirect,trainmodelIndirect,trainmodelCrim,trainmodelRandom,
+     file = paste0("TrainModels.seed.",parameters$seed,"daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))   
 
 ################################################
 ##
