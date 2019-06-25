@@ -1,9 +1,10 @@
+
 LoadParameters<-function()
 {
   parameters = data.frame(matrix(vector(), 1, 15, dimnames=list(c(), c("seed", "numtrain","numtest","itertrain","percGroup","indirect1","indirect2","daylength",      "traveltime","detaintime","alpha","gamma","epsilon","pop","movereward"))),stringsAsFactors=F)
-  parameters$seed=7816       # Seed: 7013, 5510, 2671, 5481, 1994, 9326, 3214, 7816,6882,5557 
-  parameters$numtrain=80 # Number Train runs
-  parameters$numtest=30 # Number of Test runs
+  parameters$seed=7013       # Seed: 7013, 5510, 2671, 5481, 1994, 9326, 3214, 7816,6882,5557 
+  parameters$numtrain=50 # Number Train runs
+  parameters$numtest=20 # Number of Test runs
   parameters$itertrain=25 #Number Train Iterations
   
   #parameters$bias=.1          # Amount Bias
@@ -104,13 +105,13 @@ policy <- function(x) {
 createsamplefunction<-function(population, parameters) 
 {
   
-  id_num0<-sample(1:nrow(population), parameters$daylength*2, replace=F)
+  id_num0<-sample(1:nrow(population), parameters$daylength*3, replace=F)
   Left<-NA
   Right<-NA
   Center<-NA
   LeftReward<-NA
   RightReward<-NA
-  VenterReward<-NA
+  CenterReward<-NA
   LeftCrim<-NA
   RightCrim<-NA
   CenterCrim<-NA
@@ -119,7 +120,7 @@ createsamplefunction<-function(population, parameters)
   CenterGroup<-NA
   LeftSusp<-NA
   RightSusp<-NA
-  CenterGroup<-NA
+  CenterSusp<-NA
   LeftSuspCode<-NA
   RightSuspCode<-NA
   CenterSuspCode<-NA
@@ -128,8 +129,8 @@ createsamplefunction<-function(population, parameters)
   CenterDirectCode<-NA
   LeftIndirectCode<-NA
   RightIndirectCode<-NA
-CenterIndirectCode<-NA
-    LeftRandomCode<-NA
+  CenterIndirectCode<-NA
+  LeftRandomCode<-NA
   RightRandomCode<-NA 
   CenterRandomCode<-NA  
   LeftCrimCode<-NA
@@ -151,44 +152,61 @@ CenterIndirectCode<-NA
   {
     id_num1<-id_num0[ii]
     id_num2<-id_num0[ii+parameters$daylength]
+    id_num3<-id_num0[ii+2*parameters$daylength]
     Left[ii]<-id_num1
     Right[ii]<-id_num2
+    Center[ii]<-id_num3   
     LeftReward[ii]<-population$Reward[id_num1]
     RightReward[ii]<-population$Reward[id_num2]
+    CenterReward[ii]<-population$Reward[id_num3]
     LeftGroup[ii]<-population$Group[id_num1]
     RightGroup[ii]<-population$Group[id_num2]
+    CenterGroup[ii]<-population$Group[id_num3]
     LeftSusp[ii]<-population$Susp[id_num1]
     RightSusp[ii]<-population$Susp[id_num2]
+    CenterSusp[ii]<-population$Susp[id_num3]    
     LeftCrim[ii]<-population$Crim[id_num1]
     RightCrim[ii]<-population$Crim[id_num2]
+    CenterCrim[ii]<-population$Crim[id_num3]
     State[ii]<-NA
     LeftSuspCode[ii]<-population$Susp[id_num1]
     RightSuspCode[ii]<-population$Susp[id_num2]
+    CenterSuspCode[ii]<-population$Susp[id_num3]
     LeftDirectCode[ii]<-population$DirectCode[id_num1]
     RightDirectCode[ii]<-population$DirectCode[id_num2]
+    CenterDirectCode[ii]<-population$DirectCode[id_num3]
+    
     LeftIndirectCode[ii]<-population$IndirectCode[id_num1]
     RightIndirectCode[ii]<-population$IndirectCode[id_num2]
+    CenterIndirectCode[ii]<-population$IndirectCode[id_num3]
     LeftCrimCode[ii]<-population$Crim[id_num1]
     RightCrimCode[ii]<-population$Crim[id_num2]
+    CenterCrimCode[ii]<-population$Crim[id_num3]   
     LeftRandomCode[ii]<-sample(0:9,1)
     RightRandomCode[ii]<-sample(0:9,1)
-    SuspState[ii]<-paste0(LeftSuspCode[ii],'.',RightSuspCode[ii])
-    DirectState[ii]<-paste0(LeftDirectCode[ii],'.',RightDirectCode[ii])
-    IndirectState[ii]<-paste0(LeftIndirectCode[ii],'.',RightIndirectCode[ii])
-    CrimState[ii]<-paste0(LeftCrimCode[ii],'.',RightCrimCode[ii])
-    RandomState[ii]<-paste0(LeftRandomCode[ii],'.',RightRandomCode[ii])    
-    NextSuspState[ii-1]<-paste0(LeftSuspCode[ii],'.',RightSuspCode[ii])
+    CenterRandomCode[ii]<-sample(0:9,1)
+    SuspState[ii]<-paste0(LeftSuspCode[ii],'.',CenterSuspCode[ii],'.',RightSuspCode[ii])
+    DirectState[ii]<-paste0(LeftDirectCode[ii],'.',CenterDirectCode[ii],'.',RightDirectCode[ii])
+    IndirectState[ii]<-paste0(LeftIndirectCode[ii],'.',CenterIndirectCode[ii],'.',RightIndirectCode[ii])
+    CrimState[ii]<-paste0(LeftCrimCode[ii],'.',CenterCrimCode[ii],'.',RightCrimCode[ii])
+    RandomState[ii]<-paste0(LeftRandomCode[ii],'.',CenterRandomCode[ii],'.',RightRandomCode[ii])    
+    NextSuspState[ii-1]<-paste0(LeftSuspCode[ii],'.',CenterSuspCode[ii],'.',RightSuspCode[ii])
     NextSuspState[ii]<-"End" 
-    NextDirectState[ii-1]<-paste0(LeftDirectCode[ii],'.',RightDirectCode[ii])
+    NextDirectState[ii-1]<-paste0(LeftDirectCode[ii],'.',CenterDirectCode[ii],'.',RightDirectCode[ii])
     NextDirectState[ii]<-"End"
-    NextIndirectState[ii-1]<-paste0(LeftIndirectCode[ii],'.',RightIndirectCode[ii])
+    NextIndirectState[ii-1]<-paste0(LeftIndirectCode[ii],'.',CenterIndirectCode[ii],'.',RightIndirectCode[ii])
     NextIndirectState[ii]<-"End"
-    NextCrimState[ii-1]<-paste0(LeftCrimCode[ii],'.',RightCrimCode[ii])
+    NextCrimState[ii-1]<-paste0(LeftCrimCode[ii],'.',CenterCrimCode[ii],'.',RightCrimCode[ii])
     NextCrimState[ii]<-"End"
-    NextRandomState[ii-1]<-paste0(LeftRandomCode[ii],'.',RightRandomCode[ii])
+    NextRandomState[ii-1]<-paste0(LeftRandomCode[ii],'.',CenterRandomCode[ii],'.',RightRandomCode[ii])
     NextRandomState[ii]<-"End"  
   }
-  createRLsample<-data.frame(Left,LeftGroup, LeftSusp,LeftSuspCode,LeftDirectCode,LeftIndirectCode, LeftCrim, LeftRandomCode, LeftReward, Right, RightGroup, RightSusp, RightSuspCode,   RightDirectCode, RightIndirectCode, RightCrim,RightRandomCode, RightReward,SuspState, DirectState, IndirectState,CrimState,RandomState, NextSuspState, NextDirectState, NextIndirectState,NextCrimState, NextRandomState)
+  createRLsample<-data.frame(Left,LeftGroup, LeftSusp,LeftSuspCode,LeftDirectCode,
+                             LeftIndirectCode, LeftCrim,LeftRandomCode, LeftReward,
+                             Center,CenterGroup, CenterSusp,CenterSuspCode,CenterDirectCode,
+                             CenterIndirectCode, CenterCrim,CenterRandomCode, CenterReward,
+                             Right, RightGroup, RightSusp, RightSuspCode,   
+                             RightDirectCode, RightIndirectCode, RightCrim,RightRandomCode, RightReward,SuspState, DirectState, IndirectState,CrimState,RandomState, NextSuspState, NextDirectState, NextIndirectState,NextCrimState, NextRandomState)
   return(createRLsample)
 }
 
@@ -210,26 +228,55 @@ statediagramfunction <- function(createsample, parameters,flag) {
                        "LeftCrim"=createsample$LeftCrim[1],
                        "LeftRandom"=createsample$LeftRandomCode[1],                    
                        "LeftReward"=createsample$LeftReward[1],
+                       "CenterGroup"=createsample$CenterGroup[1],
+                       "CenterSusp"=createsample$CenterSusp[1],
+                       "CenterCrim"=createsample$CenterCrim[1],
+                       "CenterRandom"=createsample$CenterRandomCode[1],                    
+                       "CenterReward"=createsample$CenterReward[1],
                        "RightGroup"=createsample$RightGroup[1],
                        "RightSusp"=createsample$RightSusp[1],                 
                        "RightCrim"=createsample$RightCrim[1],
                        "RightRandom"=createsample$RightRandomCode[1],
                        "RightReward"=createsample$RightReward[1])
   nextrow<-data.frame("State"=paste0(time,".",createsample$State[1]), 
-                      "Action"="Right", 
-                      "Reward"=createsample$RightReward[1], 
+                      "Action"="Center", 
+                      "Reward"=createsample$CenterReward[1], 
                       "NextState"=paste0(time-detain,".",createsample$NextState[1]),
                       "LeftGroup"=createsample$LeftGroup[1],
                       "LeftSusp"=createsample$LeftSusp[1],
                       "LeftCrim"=createsample$LeftCrim[1],
                       "LeftRandom"=createsample$LeftRandom[1],
                       "LeftReward"=createsample$LeftReward[1],
+                      "CenterGroup"=createsample$CenterGroup[1],
+                      "CenterSusp"=createsample$CenterSusp[1],
+                      "CenterCrim"=createsample$CenterCrim[1],
+                      "CenterRandom"=createsample$CenterRandom[1],
+                      "CenterReward"=createsample$CenterReward[1],
                       "RightGroup"=createsample$RightGroup[1],
                       "RightSusp"=createsample$RightSusp[1],                 
                       "RightCrim"=createsample$RightCrim[1],
                       "RightRandom"=createsample$RightRandom[1],
                       "RightReward"=createsample$RightReward[1])
-  statemap<-rbind(statemap,nextrow)
+  nextrow2<-data.frame("State"=paste0(time,".",createsample$State[1]), 
+                       "Action"="Right", 
+                       "Reward"=createsample$RightReward[1], 
+                       "NextState"=paste0(time-detain,".",createsample$NextState[1]),
+                       "LeftGroup"=createsample$LeftGroup[1],
+                       "LeftSusp"=createsample$LeftSusp[1],
+                       "LeftCrim"=createsample$LeftCrim[1],
+                       "LeftRandom"=createsample$LeftRandom[1],
+                       "LeftReward"=createsample$LeftReward[1],
+                       "CenterGroup"=createsample$CenterGroup[1],
+                       "CenterSusp"=createsample$CenterSusp[1],
+                       "CenterCrim"=createsample$CenterCrim[1],
+                       "CenterRandom"=createsample$CenterRandom[1],
+                       "CenterReward"=createsample$CenterReward[1],
+                       "RightGroup"=createsample$RightGroup[1],
+                       "RightSusp"=createsample$RightSusp[1],                 
+                       "RightCrim"=createsample$RightCrim[1],
+                       "RightRandom"=createsample$RightRandom[1],
+                       "RightReward"=createsample$RightReward[1])
+  statemap<-rbind(statemap,nextrow,nextrow2)
   
   nextrow<-data.frame("State"=paste0(time,".",createsample$State[1]), 
                       "Action"="None", 
@@ -240,6 +287,11 @@ statediagramfunction <- function(createsample, parameters,flag) {
                       "LeftCrim"=createsample$LeftCrim[1],
                       "LeftRandom"=createsample$LeftRandom[1],
                       "LeftReward"=createsample$LeftReward[1],
+                      "CenterGroup"=createsample$CenterGroup[1],
+                      "CenterSusp"=createsample$CenterSusp[1],
+                      "CenterCrim"=createsample$CenterCrim[1],
+                      "CenterRandom"=createsample$CenterRandom[1],
+                      "CenterReward"=createsample$CenterReward[1],
                       "RightGroup"=createsample$RightGroup[1],
                       "RightSusp"=createsample$RightSusp[1],                 
                       "RightCrim"=createsample$RightCrim[1],
@@ -284,12 +336,36 @@ statediagramfunction <- function(createsample, parameters,flag) {
                                   "LeftCrim"=createsample$LeftCrim[kk],
                                   "LeftRandom"=createsample$LeftRandomCode[kk],
                                   "LeftReward"=createsample$LeftReward[kk],
+                                  "CenterGroup"=createsample$CenterGroup[kk],
+                                  "CenterSusp"=createsample$CenterSusp[kk],
+                                  "CenterCrim"=createsample$CenterCrim[kk],
+                                  "CenterRandom"=createsample$CenterRandomCode[kk],
+                                  "CenterReward"=createsample$CenterReward[kk],                                  
                                   "RightGroup"=createsample$RightGroup[kk],
                                   "RightSusp"=createsample$RightSusp[kk],                 
                                   "RightCrim"=createsample$RightCrim[kk],
                                   "RightRandom"=createsample$RightRandomCode[kk],
                                   "RightReward"=createsample$RightReward[kk])
               nextrow2<-data.frame("State"=statedummy, 
+                                   "Action"="Center", 
+                                   "Reward"=createsample$CenterReward[kk], 
+                                   "NextState"=paste0(timedet,".",createsample$State[kk+1]),
+                                   "LeftGroup"=createsample$LeftGroup[kk],
+                                   "LeftSusp"=createsample$LeftSusp[kk],
+                                   "LeftCrim"=createsample$LeftCrim[kk],
+                                   "LeftRandom"=createsample$LeftRandomCode[kk],
+                                   "LeftReward"=createsample$LeftReward[kk],
+                                   "CenterGroup"=createsample$CenterGroup[kk],
+                                   "CenterSusp"=createsample$CenterSusp[kk],
+                                   "CenterCrim"=createsample$CenterCrim[kk],
+                                   "CenterRandom"=createsample$CenterRandomCode[kk],
+                                   "CenterReward"=createsample$CenterReward[kk], 
+                                   "RightGroup"=createsample$RightGroup[kk],
+                                   "RightSusp"=createsample$RightSusp[kk],                 
+                                   "RightCrim"=createsample$RightCrim[kk],
+                                   "RightRandom"=createsample$RightRandomCode[kk],
+                                   "RightReward"=createsample$RightReward[kk])
+              nextrow3<-data.frame("State"=statedummy, 
                                    "Action"="Right", 
                                    "Reward"=createsample$RightReward[kk], 
                                    "NextState"=paste0(timedet,".",createsample$State[kk+1]),
@@ -298,6 +374,11 @@ statediagramfunction <- function(createsample, parameters,flag) {
                                    "LeftCrim"=createsample$LeftCrim[kk],
                                    "LeftRandom"=createsample$LeftRandomCode[kk],
                                    "LeftReward"=createsample$LeftReward[kk],
+                                   "CenterGroup"=createsample$CenterGroup[kk],
+                                   "CenterSusp"=createsample$CenterSusp[kk],
+                                   "CenterCrim"=createsample$CenterCrim[kk],
+                                   "CenterRandom"=createsample$CenterRandomCode[kk],
+                                   "CenterReward"=createsample$CenterReward[kk], 
                                    "RightGroup"=createsample$RightGroup[kk],
                                    "RightSusp"=createsample$RightSusp[kk],                 
                                    "RightCrim"=createsample$RightCrim[kk],
@@ -315,12 +396,36 @@ statediagramfunction <- function(createsample, parameters,flag) {
                                   "LeftCrim"=createsample$LeftCrim[kk],
                                   "LeftRandom"=createsample$LeftRandomCode[kk],           
                                   "LeftReward"=createsample$LeftReward[kk],
+                                  "CenterGroup"=createsample$CenterGroup[kk],
+                                  "CenterSusp"=createsample$CenterSusp[kk],
+                                  "CenterCrim"=createsample$CenterCrim[kk],
+                                  "CenterRandom"=createsample$CenterRandomCode[kk],           
+                                  "CenterReward"=createsample$CenterReward[kk],                                 
                                   "RightGroup"=createsample$RightGroup[kk],
                                   "RightSusp"=createsample$RightSusp[kk],                 
                                   "RightCrim"=createsample$RightCrim[kk],
                                   "RightRandom"=createsample$RightRandomCode[kk],
                                   "RightReward"=createsample$RightReward[kk])
               nextrow2<-data.frame("State"=statedummy, 
+                                   "Action"="Center", 
+                                   "Reward"=-50, 
+                                   "NextState"="End",
+                                   "LeftGroup"=createsample$LeftGroup[kk],
+                                   "LeftSusp"=createsample$LeftSusp[kk],
+                                   "LeftCrim"=createsample$LeftCrim[kk],
+                                   "LeftRandom"=createsample$LeftRandomCode[kk],           
+                                   "LeftReward"=createsample$LeftReward[kk],
+                                   "CenterGroup"=createsample$CenterGroup[kk],
+                                   "CenterSusp"=createsample$CenterSusp[kk],
+                                   "CenterCrim"=createsample$CenterCrim[kk],
+                                   "CenterRandom"=createsample$CenterRandomCode[kk],           
+                                   "CenterReward"=createsample$CenterReward[kk],                                 
+                                   "RightGroup"=createsample$RightGroup[kk],
+                                   "RightSusp"=createsample$RightSusp[kk],                 
+                                   "RightCrim"=createsample$RightCrim[kk],
+                                   "RightRandom"=createsample$RightRandomCode[kk],
+                                   "RightReward"=createsample$RightReward[kk])
+              nextrow3<-data.frame("State"=statedummy, 
                                    "Action"="Right", 
                                    "Reward"=-50, 
                                    "NextState"="End",
@@ -329,6 +434,11 @@ statediagramfunction <- function(createsample, parameters,flag) {
                                    "LeftCrim"=createsample$LeftCrim[kk],
                                    "LeftRandom"=createsample$LeftRandomCode[kk],
                                    "LeftReward"=createsample$LeftReward[kk],
+                                   "CenterGroup"=createsample$CenterGroup[kk],
+                                   "CenterSusp"=createsample$CenterSusp[kk],
+                                   "CenterCrim"=createsample$CenterCrim[kk],
+                                   "CenterRandom"=createsample$CenterRandomCode[kk],           
+                                   "CenterReward"=createsample$CenterReward[kk],                                 
                                    "RightGroup"=createsample$RightGroup[kk],
                                    "RightSusp"=createsample$RightSusp[kk],                 
                                    "RightCrim"=createsample$RightCrim[kk],
@@ -337,7 +447,7 @@ statediagramfunction <- function(createsample, parameters,flag) {
             } 
             if(as.numeric(openstate[1])>=move)
             {
-              nextrow3<-data.frame("State"=statedummy, 
+              nextrow4<-data.frame("State"=statedummy, 
                                    "Action"="None", 
                                    "Reward"=0, 
                                    "NextState"=paste0(timemove,".",createsample$State[kk+1]),
@@ -346,16 +456,21 @@ statediagramfunction <- function(createsample, parameters,flag) {
                                    "LeftCrim"=createsample$LeftCrim[kk],
                                    "LeftRandom"=createsample$LeftRandomCode[kk],
                                    "LeftReward"=createsample$LeftReward[kk],
+                                   "CenterGroup"=createsample$CenterGroup[kk],
+                                   "CenterSusp"=createsample$CenterSusp[kk],
+                                   "CenterCrim"=createsample$CenterCrim[kk],
+                                   "CenterRandom"=createsample$CenterRandomCode[kk],
+                                   "CenterReward"=createsample$CenterReward[kk],
                                    "RightGroup"=createsample$RightGroup[kk],
                                    "RightSusp"=createsample$RightSusp[kk],                 
                                    "RightCrim"=createsample$RightCrim[kk],
                                    "RightRandom"=createsample$RightRandomCode[kk],
                                    "RightReward"=createsample$RightReward[kk])
-              statemap<-rbind(statemap, nextrow, nextrow2, nextrow3)
+              statemap<-rbind(statemap, nextrow, nextrow2, nextrow3,nextrow4)
             }
             else if (as.numeric(openstate[1])<move)
             {
-              nextrow3<-data.frame("State"=statedummy, 
+              nextrow4<-data.frame("State"=statedummy, 
                                    "Action"="None", 
                                    "Reward"=0, 
                                    "NextState"="End",
@@ -364,12 +479,17 @@ statediagramfunction <- function(createsample, parameters,flag) {
                                    "LeftCrim"=createsample$LeftCrim[kk],
                                    "LeftRandom"=createsample$LeftRandomCode[kk],
                                    "LeftReward"=createsample$LeftReward[kk],
+                                   "CenterGroup"=createsample$CenterGroup[kk],
+                                   "CenterSusp"=createsample$CenterSusp[kk],
+                                   "CenterCrim"=createsample$CenterCrim[kk],
+                                   "CenterRandom"=createsample$CenterRandomCode[kk],
+                                   "CenterReward"=createsample$CenterReward[kk],
                                    "RightGroup"=createsample$RightGroup[kk],
                                    "RightSusp"=createsample$RightSusp[kk],                 
                                    "RightCrim"=createsample$RightCrim[kk],
                                    "RightRandom"=createsample$RightRandomCode[kk],
                                    "RightReward"=createsample$RightReward[kk])
-              statemap<-rbind(statemap, nextrow, nextrow2, nextrow3)
+              statemap<-rbind(statemap, nextrow, nextrow2, nextrow3,nextrow4)
             }
           } 
         }
@@ -454,7 +574,7 @@ createpopulation<-function(parameters)
     }
     if (person$Group==2)
     {
-      person$Indirect<- sample(0:1, 1, replace=T,prob=c(1-parameters$indirect2,1-parameters$indirect2))
+      person$Indirect<- sample(0:1, 1, replace=T,prob=c(1-parameters$indirect2,parameters$indirect2))
       person$Susp<-  round(person$Crim +   rnorm(1,1,1))
       if(person$Susp<0)
       {person$Susp<-0}
@@ -482,7 +602,7 @@ policywork<-function(policytest,test)
   {
     policytest$State[ii]<-sub('X','', policytest$State[ii])
   }
-  finalpolicy<-data.frame("State"=NA,"Action"=NA, "Reward"=NA, "LeftCrim"=NA, "LeftGroup"=NA, "LeftSusp"=NA, "LeftReward"=NA, "RightCrim"=NA, "RightGroup"=NA, "RightSusp"=NA, "RightReward"=NA, "NextState"=NA)
+  finalpolicy<-data.frame("State"=NA,"Action"=NA, "Reward"=NA, "LeftCrim"=NA, "LeftGroup"=NA, "LeftSusp"=NA, "LeftReward"=NA, "CenterCrim"=NA, "CenterGroup"=NA, "CenterSusp"=NA, "CenterReward"=NA,"RightCrim"=NA, "RightGroup"=NA, "RightSusp"=NA, "RightReward"=NA, "NextState"=NA)
   finalpolicy2<-finalpolicy
   
   for(jj in 1:nrow(test))
@@ -498,6 +618,10 @@ policywork<-function(policytest,test)
       finalpolicy2$LeftGroup<-test$LeftGroup[jj]  
       finalpolicy2$LeftSusp<-test$LeftSusp[jj] 
       finalpolicy2$LeftReward<-test$LeftReward[jj]    
+      finalpolicy2$CenterCrim<-test$CenterCrim[jj]   
+      finalpolicy2$CenterGroup<-test$CenterGroup[jj]  
+      finalpolicy2$CenterSusp<-test$CenterSusp[jj] 
+      finalpolicy2$CenterReward<-test$CenterReward[jj]      
       finalpolicy2$RightCrim<-test$RightCrim[jj] 
       finalpolicy2$RightGroup<-test$RightGroup[jj]  
       finalpolicy2$RightSusp<-test$RightSusp[jj] 
@@ -513,7 +637,7 @@ policywork<-function(policytest,test)
 }
 
 ################################################
-##This is a routine to find the best soultion
+##This is a routine to find the best solution
 ################################################
 
 RLSolution<-function(finalpolicy)
@@ -536,6 +660,8 @@ RLSolution<-function(finalpolicy)
     for(kk in 1:nrow(RLsolution))
     {if (RLsolution$Action[kk]=="Left")
     {RLsolution$Group[kk]<-RLsolution$LeftGroup[kk]}
+      if (RLsolution$Action[kk]=="Center")  
+      {RLsolution$Group[kk]<-RLsolution$CenterGroup[kk]}
       if (RLsolution$Action[kk]=="Right")  
       {RLsolution$Group[kk]<-RLsolution$RightGroup[kk]}
       if (RLsolution$Action[kk]=="None")  
@@ -673,7 +799,6 @@ for (m in 1:parameters$numtrain)
   policytrainSusp<-computePolicy(trainmodelSusp)
   finalpolicytrainSusp<-policywork(policytrainSusp,trainSusp)
   RLsolutionTrainSusp2<-RLSolution(finalpolicytrainSusp)
-  
   RLtableTrainSusp2<-as.data.frame(table(RLsolutionTrainSusp2$Group))
   proportionTrainSusp2<-RLtableTrainSusp2[2,2]/(RLtableTrainSusp2[1,2]+RLtableTrainSusp2[2,2])
   
@@ -750,7 +875,8 @@ save(proportionTrainSusp,proportionTrainDirect,proportionTrainIndirect,
      proportionTrainCrim,proportionTrainRandom, 
      file = paste0("proportionTrain.seed.",parameters$seed,"daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
 
-
+save(trainmodelSusp,trainmodelDirect,trainmodelIndirect,trainmodelCrim,trainmodelRandom,
+     file = paste0("TrainModels.seed.",parameters$seed,"daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))     
 
 ################################################
 ##
@@ -784,7 +910,7 @@ for(j in 1:parameters$numtest)
   RLtestsampleCrim<-RLtestsample
   RLtestsampleRandom<-RLtestsample
   
-  for(i in 1:nrow(RLtrainsample))
+  for(i in 1:nrow(RLtestsample))
   {
     RLtestsampleSusp$State[i]<-as.character(RLtestsample$SuspState[i])
     RLtestsampleSusp$NextState[i]<-as.character(RLtestsample$NextSuspState[i])
@@ -812,10 +938,10 @@ for(j in 1:parameters$numtest)
   testmodelIndirect<-runRL(testIndirect,trainmodelIndirect,parameters)
   
   testCrim<-statediagramfunction(RLtestsampleCrim, parameters)
-  testmodelCrim<-runRLinit(testCrim,parameters)
+  testmodelCrim<-runRL(testCrim,trainmodelCrim,parameters)
   
   testRandom<-statediagramfunction(RLtestsampleRandom, parameters)
-  testmodelRandom<-runRLinit(testRandom,parameters)
+  testmodelRandom<-runRL(testRandom,trainmodelRandom,parameters)
   
   policytestSusp<-computePolicy(testmodelSusp)
   finalpolicySusp<-policywork(policytestSusp,testSusp)
@@ -892,8 +1018,9 @@ RLsolutionCrimIdeal<-BestPolicy(testCrim,parameters)
 RLsolutionRandomIdeal<-BestPolicy(testRandom,parameters)
 
 
-save(RLsolutionSuspIdeal,RLsolutionDirectIdeal,RLsolutionIndirect,RLsolutionCrimIdeal,RLsolutionRandomIdeal, file = paste0("RLsolutionIdeal.daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
+save(RLsolutionSuspIdeal,RLsolutionDirectIdeal,RLsolutionIndirect,RLsolutionCrimIdeal,RLsolutionRandomIdeal, file = paste0("RLsolutionIdeal.seed.", parameters$seed,"daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
 
 save(proportionSusp,proportionDirect,proportionIndirect,proportionCrim,proportionRandom,file =paste0("proportion.",parameters$seed,".",parameters$numtrain,".",parameters$numtest,".",parameters$itertrain,".rda"))
+
 
 

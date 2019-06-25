@@ -1,29 +1,39 @@
 ```{r}
-load("/Users/gatliffe/Desktop/proportion.1994.50.20.25.rda")
+proportionSusp1<-NA
+proportionDirect1<-NA
+proportionIndirect1<-NA
+proportionCrim1<-NA
+proportionRandom1<-NA
+proportionSusp<-NA
+proportionDirect<-NA
+proportionIndirect<-NA
+proportionCrim<-NA
+proportionRandom<-NA
+load("/Users/gatliffe/Alethea/From Drive/Proportion/proportion.1994.100.20.20.rda")
 proportionSusp1<-proportionSusp
 proportionDirect1<-proportionDirect
 proportionIndirect1<-proportionIndirect
 proportionCrim1<-proportionCrim
 proportionRandom1<-proportionRandom
- load("/Users/gatliffe/Desktop/proportion.7013.50.20.25.rda")
+load("/Users/gatliffe/Alethea/From Drive/Proportion/proportion.7013.100.20.20.rda")
 proportionSusp1<-rbind(proportionSusp1,proportionSusp)
 proportionDirect1<-rbind(proportionDirect1,proportionDirect)
 proportionIndirect1<-rbind(proportionIndirect1,proportionIndirect)
 proportionCrim1<-rbind(proportionCrim1,proportionCrim)
 proportionRandom1<-rbind(proportionRandom1,proportionRandom) 
-load("/Users/gatliffe/Desktop/proportion.5510.50.20.25.rda") 
+load("/Users/gatliffe/Alethea/From Drive/Proportion/proportion.5510.100.20.20.rda")
 proportionSusp1<-rbind(proportionSusp1,proportionSusp)
 proportionDirect1<-rbind(proportionDirect1,proportionDirect)
 proportionIndirect1<-rbind(proportionIndirect1,proportionIndirect)
 proportionCrim1<-rbind(proportionCrim1,proportionCrim)
 proportionRandom1<-rbind(proportionRandom1,proportionRandom)
-load("/Users/gatliffe/Desktop/proportion.2671.50.20.25.rda")
+load("/Users/gatliffe/Alethea/From Drive/Proportion/proportion.2671.100.20.20.rda")
 proportionSusp1<-rbind(proportionSusp1,proportionSusp)
 proportionDirect1<-rbind(proportionDirect1,proportionDirect)
 proportionIndirect1<-rbind(proportionIndirect1,proportionIndirect)
 proportionCrim1<-rbind(proportionCrim1,proportionCrim)
 proportionRandom1<-rbind(proportionRandom1,proportionRandom)
-load("/Users/gatliffe/Desktop/proportion.5481.50.20.25.rda")
+load("/Users/gatliffe/Alethea/From Drive/Proportion/proportion.5481.100.20.20.rda")
 proportionSusp1<-rbind(proportionSusp1,proportionSusp)
 proportionDirect1<-rbind(proportionDirect1,proportionDirect)
 proportionIndirect1<-rbind(proportionIndirect1,proportionIndirect)
@@ -31,60 +41,63 @@ proportionCrim1<-rbind(proportionCrim1,proportionCrim)
 proportionRandom1<-rbind(proportionRandom1,proportionRandom)
 
 mydf <- data.frame(y=c(proportionSusp1,proportionDirect1,proportionIndirect1,proportionCrim1,proportionRandom1),
-x=c(rep(1,length(proportionSusp1)),rep(2,length(proportionDirect1)),
-    rep(3,length(proportionIndirect1)),rep(4,length(proportionCrim1)),
-    rep(5,length(proportionRandom1))))
+x=c(rep("1.Susp",length(proportionSusp1)),rep("2.Direct",length(proportionDirect1)),
+    rep("3.Indirect",length(proportionIndirect1)),rep("4.Crim",length(proportionCrim1)),
+    rep("5.Random",length(proportionRandom1))))
 with(mydf, boxplot(y~x))
 ```
 
 ```{r}
-summary(proportionSusp)
- summary    (proportionDirect)
-     summary(proportionIndirect)
-     summary(proportionCrim)
-       summary(proportionRandom)
 
-       sd(proportionSusp)
- sd(proportionDirect)
-     sd(proportionIndirect)
-     sd(proportionCrim)
-       sd(proportionRandom)
-       
-        me <- qt(.95,9)*sd(proportionSusp)/sqrt(10)
-        mean(proportionSusp) - me
-        mean(proportionSusp) + me
+summarizedata<-function(proportion,i)
+{
+summarydata1<-data.frame("name"=NA, "mean"=NA, "sd"=NA, "lci"=NA, "uci"=NA)
+if(i==1){summarydata1$name<-"Suspicousness Only"}
+  if(i==2){summarydata1$name<-"Group and Susp"}
+  if(i==3){summarydata1$name<-"Indirect and Susp"}
+  if(i==4){summarydata1$name<-"Criminal Only"}
+    if(i==5){summarydata1$name<-"Random"}
+  summarydata1$mean<-mean(proportion)
+  summarydata1$sd<-sd(proportion)
+  me <- qt(.9,9)*sd(proportion)/sqrt(10)
+  summarydata1$lci<-mean(proportion) - me
+  summarydata1$uci<-mean(proportion) + me
+ return(summarydata1) 
+}
+
+load("/Users/gatliffe/Alethea/From Drive/Proportion/proportion.7013.100.20.20.rda")
+summarydata<-data.frame("name"=NA, "mean"=NA, "sd"=NA, "lci"=NA, "uci"=NA)
+
+for(i in 1:5)
+{
+if(i==1){proportion<-(proportionSusp)
+summarydata1<-summarizedata(proportionSusp,i)}
+  if(i==2){proportion<-(proportionDirect)
+summarydata1<-summarizedata(proportionDirect,i)}
+  if(i==3){proportion<-(proportionIndirect)
+summarydata1<-summarizedata(proportionIndirect,i)} 
+  if(i==4){proportion<-(proportionCrim)
+summarydata1<-summarizedata(proportionCrim,i)} 
+    if(i==5){proportion<-(proportionRandom)
+summarydata1<-summarizedata(proportionRandom,i)}
+  summarydata<-rbind(summarydata,summarydata1)
+}
+summarydata<-na.omit(summarydata)
+View(summarydata)
 ```
 
-```{r}
-View(proportionSusp)
- View    (proportionDirect)
-     View(proportionIndirect)
-     View(proportionCrim)
-       View(proportionRandom)
-```
 ```{r}
 mydf <- data.frame(y=c(proportionSusp,proportionDirect,proportionIndirect,proportionCrim,proportionRandom),
-x=c(rep(1,length(proportionSusp)),rep(2,length(proportionDirect)),
-    rep(3,length(proportionIndirect)),rep(4,length(proportionCrim)),
-    rep(5,length(proportionRandom))))
+x=c(rep("1.Susp",length(proportionSusp)),rep("2.Direct",length(proportionDirect)),
+    rep("3.Indirect",length(proportionIndirect)),rep("4.Crim",length(proportionCrim)),
+    rep("5.Random",length(proportionRandom))))
 with(mydf, boxplot(y~x))
 ```
 
 ```{r}
 mydf <- data.frame(y=c(proportionTrainSusp,proportionTrainDirect,proportionTrainIndirect,proportionTrainCrim,proportionTrainRandom),
-x=c(rep(1,length(proportionTrainSusp)),rep(2,length(proportionTrainDirect)),
-    rep(3,length(proportionTrainIndirect)),rep(4,length(proportionTrainCrim)),
-    rep(5,length(proportionTrainRandom))))
+x=c(rep("1.Susp",length(proportionTrainSusp)),rep("2.Direct",length(proportionTrainDirect)),
+    rep("3.Indirect",length(proportionTrainIndirect)),rep("4.Crim",length(proportionTrainCrim)),
+    rep("5.Random",length(proportionTrainRandom))))
 with(mydf, boxplot(y~x))
 ```
-
-```{r}
-ggplot(trainpopulation, aes(x=Crim, y=Susp, color=Group)) +
-    geom_point()+ geom_smooth(method = "lm")+ scale_color_manual(values=c('#63b8ff','#e066ff'))
-
-```
-
-```{r}
-table(trainpopulation$Indirect, trainpopulation$Group)
-```
-

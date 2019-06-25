@@ -2,9 +2,9 @@
 LoadParameters<-function()
 {
   parameters = data.frame(matrix(vector(), 1, 15, dimnames=list(c(), c("seed", "numtrain","numtest","itertrain","percGroup","indirect1","indirect2","daylength",      "traveltime","detaintime","alpha","gamma","epsilon","pop","movereward"))),stringsAsFactors=F)
-  parameters$seed=7816       # Seed: 7013, 5510, 2671, 5481, 1994, 9326, 3214, 7816,6882,5557 
+  parameters$seed=7013       # Seed: 7013, 5510, 2671, 5481, 1994, 9326, 3214, 7816,6882,5557 
   parameters$numtrain=1 # Number Train runs
-  parameters$numtest=1 # Number of Test runs
+  parameters$numtest=10 # Number of Test runs
   parameters$itertrain=1 #Number Train Iterations
   
   #parameters$bias=.1          # Amount Bias
@@ -238,7 +238,26 @@ statediagramfunction <- function(createsample, parameters,flag) {
                        "RightCrim"=createsample$RightCrim[1],
                        "RightRandom"=createsample$RightRandomCode[1],
                        "RightReward"=createsample$RightReward[1])
-  nextrow<-data.frame("State"=paste0(time,".",createsample$State[1]), 
+   nextrow<-data.frame("State"=paste0(time,".",createsample$State[1]), 
+                      "Action"="Center", 
+                      "Reward"=createsample$CenterReward[1], 
+                      "NextState"=paste0(time-detain,".",createsample$NextState[1]),
+                      "LeftGroup"=createsample$LeftGroup[1],
+                      "LeftSusp"=createsample$LeftSusp[1],
+                      "LeftCrim"=createsample$LeftCrim[1],
+                      "LeftRandom"=createsample$LeftRandom[1],
+                      "LeftReward"=createsample$LeftReward[1],
+                      "CenterGroup"=createsample$CenterGroup[1],
+                      "CenterSusp"=createsample$CenterSusp[1],
+                      "CenterCrim"=createsample$CenterCrim[1],
+                      "CenterRandom"=createsample$CenterRandom[1],
+                      "CenterReward"=createsample$CenterReward[1],
+                      "RightGroup"=createsample$RightGroup[1],
+                      "RightSusp"=createsample$RightSusp[1],                 
+                      "RightCrim"=createsample$RightCrim[1],
+                      "RightRandom"=createsample$RightRandom[1],
+                      "RightReward"=createsample$RightReward[1])
+  nextrow2<-data.frame("State"=paste0(time,".",createsample$State[1]), 
                       "Action"="Right", 
                       "Reward"=createsample$RightReward[1], 
                       "NextState"=paste0(time-detain,".",createsample$NextState[1]),
@@ -257,7 +276,7 @@ statediagramfunction <- function(createsample, parameters,flag) {
                       "RightCrim"=createsample$RightCrim[1],
                       "RightRandom"=createsample$RightRandom[1],
                       "RightReward"=createsample$RightReward[1])
-  statemap<-rbind(statemap,nextrow)
+  statemap<-rbind(statemap,nextrow,nextrow2)
   
   nextrow<-data.frame("State"=paste0(time,".",createsample$State[1]), 
                       "Action"="None", 
@@ -447,7 +466,7 @@ statediagramfunction <- function(createsample, parameters,flag) {
                                    "RightCrim"=createsample$RightCrim[kk],
                                    "RightRandom"=createsample$RightRandomCode[kk],
                                    "RightReward"=createsample$RightReward[kk])
-              statemap<-rbind(statemap, nextrow, nextrow2, nextrow3)
+              statemap<-rbind(statemap, nextrow, nextrow2, nextrow3,nextrow4)
             }
             else if (as.numeric(openstate[1])<move)
             {
@@ -470,7 +489,7 @@ statediagramfunction <- function(createsample, parameters,flag) {
                                    "RightCrim"=createsample$RightCrim[kk],
                                    "RightRandom"=createsample$RightRandomCode[kk],
                                    "RightReward"=createsample$RightReward[kk])
-              statemap<-rbind(statemap, nextrow, nextrow2, nextrow3)
+              statemap<-rbind(statemap, nextrow, nextrow2, nextrow3,nextrow4)
             }
           } 
         }
@@ -555,7 +574,7 @@ createpopulation<-function(parameters)
     }
     if (person$Group==2)
     {
-      person$Indirect<- sample(0:1, 1, replace=T,prob=c(1-parameters$indirect2,1-parameters$indirect2))
+      person$Indirect<- sample(0:1, 1, replace=T,prob=c(1-parameters$indirect2,parameters$indirect2))
       person$Susp<-  round(person$Crim +   rnorm(1,1,1))
       if(person$Susp<0)
       {person$Susp<-0}
@@ -579,11 +598,11 @@ policywork<-function(policytest,test)
   policytest<-cbind(policytest,State=rownames(policytest))
   policytest$State<-as.character(policytest$State)
   finalpolicy<-NA
-  for (ii in 1:nrow(policytest))
+   for (ii in 1:nrow(policytest))
   {
     policytest$State[ii]<-sub('X','', policytest$State[ii])
   }
-  finalpolicy<-data.frame("State"=NA,"Action"=NA, "Reward"=NA, "LeftCrim"=NA, "LeftGroup"=NA, "LeftSusp"=NA, "LeftReward"=NA, "RightCrim"=NA, "RightGroup"=NA, "RightSusp"=NA, "RightReward"=NA, "NextState"=NA)
+  finalpolicy<-data.frame("State"=NA,"Action"=NA, "Reward"=NA, "LeftCrim"=NA, "LeftGroup"=NA, "LeftSusp"=NA, "LeftReward"=NA, "CenterCrim"=NA, "CenterGroup"=NA, "CenterSusp"=NA, "CenterReward"=NA,"RightCrim"=NA, "RightGroup"=NA, "RightSusp"=NA, "RightReward"=NA, "NextState"=NA)
   finalpolicy2<-finalpolicy
   
   for(jj in 1:nrow(test))
@@ -618,7 +637,7 @@ policywork<-function(policytest,test)
 }
 
 ################################################
-##This is a routine to find the best soultion
+##This is a routine to find the best solution
 ################################################
 
 RLSolution<-function(finalpolicy)
@@ -679,12 +698,12 @@ library(wesanderson)
 
 parameters<-LoadParameters()
 
-load(paste0("TestPopulation.",parameters$seed,".rda"))
+load("/Users/gatliffe/Alethea/From Drive/TestPopulation/TestPopulation.2671.rda")  
+load("/Users/gatliffe/Alethea/From Drive/TrainModels/TrainModels.seed.2671.daylength.28.numtrain.100.numtest.20.itertrain.20.rda")
+load("/Users/gatliffe/Alethea/From Drive/TrainPopulation/TrainPopulation.2671.rda")
 ################################################
 ##
 ################################################
-
-load(paste0("TrainModels.seed.",parameters$seed,"daylength.",parameters$daylength,".numtrain.",parameters$numtrain,"itertrain.",parameters$itertrain,".rda"))  
 
 RLsolutionSusp<-NA
 RLsolutionDirect<-NA
@@ -822,7 +841,7 @@ RLsolutionCrimIdeal<-BestPolicy(testCrim,parameters)
 RLsolutionRandomIdeal<-BestPolicy(testRandom,parameters)
 
 
-save(RLsolutionSuspIdeal,RLsolutionDirectIdeal,RLsolutionIndirect,RLsolutionCrimIdeal,RLsolutionRandomIdeal, file = paste0("RLsolutionIdeal.daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
+save(RLsolutionSuspIdeal,RLsolutionDirectIdeal,RLsolutionIndirect,RLsolutionCrimIdeal,RLsolutionRandomIdeal, file = paste0("RLsolutionIdeal.seed.", parameters$seed,"daylength.",parameters$daylength,".numtrain.",parameters$numtrain,".numtest.",parameters$numtest,".itertrain.",parameters$itertrain,".rda"))
 
 save(proportionSusp,proportionDirect,proportionIndirect,proportionCrim,proportionRandom,file =paste0("proportion.",parameters$seed,".",parameters$numtrain,".",parameters$numtest,".",parameters$itertrain,".rda"))
 
